@@ -3,6 +3,7 @@ import { Command } from "commander";
 import prompts from "prompts";
 import fs from "fs-extra";
 import path from "path";
+import os from "os";
 import chalk from "chalk";
 import { execSync } from "child_process";
 import {
@@ -60,6 +61,62 @@ const promptAgentSelection = async () => {
     initial: 0,
   });
   return response.agent;
+};
+
+/**
+ * Executes a command in a temporary directory and merges the results back to the project.
+ * This prevents tools like ag-kit from overwriting existing project configuration.
+ */
+const safeExecSkillCommand = async (
+  cmd: string,
+  projectPath: string,
+  agentDirName: string,
+) => {
+  const tmpDir = path.join(os.tmpdir(), `sdd-ai-${Math.random().toString(36).substring(7)}`);
+  await fs.ensureDir(tmpDir);
+
+  try {
+    console.log(chalk.gray(`Running command in safe mode: ${cmd}`));
+
+    // Execute the command in the temporary directory
+    execSync(cmd, { stdio: "inherit", cwd: tmpDir });
+
+    // Look for .agent directory in tmpDir (common output for many kits)
+    const tmpAgentDir = path.join(tmpDir, ".agent");
+    const targetAgentDir = path.join(projectPath, agentDirName);
+
+    if (fs.existsSync(tmpAgentDir)) {
+      console.log(chalk.blue(`\n🔄 Merging new skills into ${agentDirName}/...`));
+
+      // Smart merge: recursive copy but don't overwrite if file exists
+      const mergeDirs = async (src: string, dest: string) => {
+        await fs.ensureDir(dest);
+        const entries = await fs.readdir(src, { withFileTypes: true });
+
+        for (const entry of entries) {
+          const srcPath = path.join(src, entry.name);
+          const destPath = path.join(dest, entry.name);
+
+          if (entry.isDirectory()) {
+            await mergeDirs(srcPath, destPath);
+          } else {
+            if (!fs.existsSync(destPath)) {
+              await fs.copy(srcPath, destPath);
+            } else {
+              console.log(chalk.gray(`  Skipping existing file: ${entry.name}`));
+            }
+          }
+        }
+      };
+
+      await mergeDirs(tmpAgentDir, targetAgentDir);
+    }
+  } catch (err) {
+    console.error(chalk.red(`Error in safe execution: ${err}`));
+  } finally {
+    // Cleanup
+    await fs.remove(tmpDir);
+  }
 };
 
 const initAction = async (projectDirectory?: string, agent?: string) => {
@@ -193,11 +250,16 @@ const applySkillsAction = async (projectDirectory?: string, agent?: string) => {
       for (const cmdObj of skillConfig.commands) {
         console.log(chalk.green(`\n${cmdObj.message}`));
         try {
-          const options: any = { stdio: "inherit" };
-          if (cmdObj.useProjectDir) {
-            options.cwd = projectPath;
+          if (skillId === "antigravity-kit") {
+            // Specialized safe path for ag-kit
+            await safeExecSkillCommand(cmdObj.cmd, projectPath, agentDirName);
+          } else {
+            const options: any = { stdio: "inherit" };
+            if (cmdObj.useProjectDir) {
+              options.cwd = projectPath;
+            }
+            execSync(cmdObj.cmd, options);
           }
-          execSync(cmdObj.cmd, options);
         } catch (err) {
           console.log(chalk.red(`Error running command: ${cmdObj.cmd}`));
         }
@@ -540,8 +602,12 @@ program
     "[project-directory]",
     "Directory to inject the skills into (defaults to current directory)",
   )
-  .action(async (dir) => {
-    const success = await applySkillsAction(dir);
+  .option(
+    "-a, --agent <agent>",
+    "Target AI Assistant (antigravity, claude, gemini, cursor, etc.)",
+  )
+  .action(async (dir, options) => {
+    const success = await applySkillsAction(dir, options.agent);
     if (!success) process.exit(1);
   });
 
@@ -554,8 +620,9 @@ program
     "[project-directory]",
     "Directory to create the AGENTS.md file in (defaults to current directory)",
   )
-  .action(async (dir) => {
-    const success = await agentInitAction(dir);
+  .option("-a, --agent <agent>", "Target AI Assistant")
+  .action(async (dir, options) => {
+    const success = await agentInitAction(dir, options.agent);
     if (!success) process.exit(1);
   });
 
@@ -584,8 +651,9 @@ program
     "[project-directory]",
     "Directory to install the templates into (defaults to current directory)",
   )
-  .action(async (dir) => {
-    const success = await specSkillsAddAction(dir);
+  .option("-a, --agent <agent>", "Target AI Assistant")
+  .action(async (dir, options) => {
+    const success = await specSkillsAddAction(dir, options.agent);
     if (!success) process.exit(1);
   });
 
