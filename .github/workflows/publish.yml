@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment:
+      name: release
     permissions:
       contents: read
       id-token: write
@@ -28,5 +30,13 @@ jobs:
       - name: Run Tests
         run: npm test
 
+      - name: NPM Diagnostics
+        run: |
+          npm --version
+          npm config list
+          npm whoami || echo "Not logged in (Expected before OIDC exchange)"
+
       - name: Publish to NPM
         run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: "" # Clear any inherited token to force OIDC exchange
