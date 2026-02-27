@@ -1,0 +1,61 @@
+{
+  "specs": [
+    {
+      "value": "openspec",
+      "title": "OpenSpec (@fission-ai/openspec)",
+      "description": "Creates an AI-friendly spec.md setup",
+      "selected": true,
+      "commands": [
+        {
+          "message": "Installing @fission-ai/openspec globally...",
+          "cmd": "npm install -g @fission-ai/openspec@latest",
+          "useProjectDir": false
+        },
+        {
+          "message": "Running openspec init...",
+          "cmd": "openspec init",
+          "useProjectDir": true
+        }
+      ]
+    },
+    {
+      "value": "speckit",
+      "title": "Spec-Kit (github/spec-kit)",
+      "description": "Advanced Git, Agent, and Workflow specs",
+      "selected": true,
+      "commands": [
+        {
+          "message": "Running spec-kit initialization...",
+          "cmd": "uvx --from git+https://github.com/github/spec-kit.git specify init .",
+          "useProjectDir": true
+        }
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "value": "antigravity-kit",
+      "title": "Antigravity Kit (vudovn/antigravity-kit)",
+      "description": "Useful standard workflow skills",
+      "commands": [
+        {
+          "message": "Installing Antigravity Kit...",
+          "cmd": "npx -y @vudovn/ag-kit@latest init",
+          "useProjectDir": true
+        }
+      ]
+    },
+    {
+      "value": "antigravity-awesome-skills",
+      "title": "Awesome Skills (sickn33/antigravity-awesome-skills)",
+      "description": "Community curated skill tools",
+      "commands": [
+        {
+          "message": "Installing Antigravity Awesome Skills...",
+          "cmd": "npx -y antigravity-awesome-skills@latest",
+          "useProjectDir": true
+        }
+      ]
+    }
+  ]
+}

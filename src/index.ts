@@ -5,6 +5,8 @@ import fs from "fs-extra";
 import path from "path";
 import chalk from "chalk";
 import { execSync } from "child_process";
+import { AGENT_INIT_SKILL, AGENT_INIT_WORKFLOW } from "./templates";
+import config from "./config.json";
 
 const packageJson = require("../package.json");
 
@@ -55,36 +57,45 @@ program
     );
 
     try {
-      console.log(
-        chalk.green("\n📦 Installing @fission-ai/openspec globally..."),
-      );
-      execSync("npm install -g @fission-ai/openspec@latest", {
-        stdio: "inherit",
+      const specPrompt = await prompts({
+        type: "multiselect",
+        name: "specs",
+        message: "Which Spec-Driven tools would you like to initialize?",
+        choices: config.specs.map((spec) => ({
+          title: spec.title,
+          value: spec.value,
+          description: spec.description,
+          selected: spec.selected,
+        })),
+        hint: "- Space to select. Return to submit",
       });
 
-      console.log(chalk.green("\n🛠️ Running openspec init..."));
-      try {
-        execSync("openspec init", { cwd: projectPath, stdio: "inherit" });
-      } catch (err) {
+      if (!specPrompt.specs || specPrompt.specs.length === 0) {
         console.log(
-          chalk.yellow(
-            "Note: openspec init may have exited non-zero or was aborted, continuing...",
-          ),
+          chalk.yellow("\n⚠️ No spec tools selected. Skipping spec setup."),
         );
-      }
-
-      console.log(chalk.green("\n✨ Running spec-kit initialization..."));
-      try {
-        execSync(
-          "uvx --from git+https://github.com/github/spec-kit.git specify init .",
-          { cwd: projectPath, stdio: "inherit" },
-        );
-      } catch (err) {
-        console.log(
-          chalk.yellow(
-            "Note: spec-kit (specify init) may have exited non-zero, make sure you have 'uv' installed, continuing...",
-          ),
-        );
+      } else {
+        for (const specId of specPrompt.specs) {
+          const specConfig = config.specs.find((s: any) => s.value === specId);
+          if (specConfig) {
+            for (const cmdObj of specConfig.commands) {
+              console.log(chalk.green(`\n${cmdObj.message}`));
+              try {
+                const options: any = { stdio: "inherit" };
+                if (cmdObj.useProjectDir) {
+                  options.cwd = projectPath;
+                }
+                execSync(cmdObj.cmd, options);
+              } catch (err) {
+                console.log(
+                  chalk.yellow(
+                    `Note: Command '${cmdObj.cmd}' may have exited non-zero or was aborted, continuing...`,
+                  ),
+                );
+              }
+            }
+          }
+        }
       }
 
       console.log(
@@ -123,18 +134,11 @@ program
       type: "multiselect",
       name: "skills",
       message: "Which skill packs would you like to install?",
-      choices: [
-        {
-          title: "Antigravity Kit (vudovn/antigravity-kit)",
-          value: "antigravity-kit",
-          description: "Useful standard workflow skills",
-        },
-        {
-          title: "Awesome Skills (sickn33/antigravity-awesome-skills)",
-          value: "antigravity-awesome-skills",
-          description: "Community curated skill tools",
-        },
-      ],
+      choices: config.skills.map((skill: any) => ({
+        title: skill.title,
+        value: skill.value,
+        description: skill.description,
+      })),
       hint: "- Space to select. Return to submit",
     });
 
@@ -143,27 +147,21 @@ program
       process.exit(0);
     }
 
-    if (response.skills.includes("antigravity-kit")) {
-      console.log(chalk.green("\n📦 Installing Antigravity Kit..."));
-      try {
-        execSync("npx -y @vudovn/ag-kit@latest init", {
-          cwd: projectPath,
-          stdio: "inherit",
-        });
-      } catch (err) {
-        console.log(chalk.red("Error installing Antigravity Kit."));
-      }
-    }
-
-    if (response.skills.includes("antigravity-awesome-skills")) {
-      console.log(chalk.green("\n📦 Installing Antigravity Awesome Skills..."));
-      try {
-        execSync("npx -y antigravity-awesome-skills@latest", {
-          cwd: projectPath,
-          stdio: "inherit",
-        });
-      } catch (err) {
-        console.log(chalk.red("Error installing Antigravity Awesome Skills."));
+    for (const skillId of response.skills) {
+      const skillConfig = config.skills.find((s: any) => s.value === skillId);
+      if (skillConfig) {
+        for (const cmdObj of skillConfig.commands) {
+          console.log(chalk.green(`\n${cmdObj.message}`));
+          try {
+            const options: any = { stdio: "inherit" };
+            if (cmdObj.useProjectDir) {
+              options.cwd = projectPath;
+            }
+            execSync(cmdObj.cmd, options);
+          } catch (err) {
+            console.log(chalk.red(`Error running command: ${cmdObj.cmd}`));
+          }
+        }
       }
     }
 
@@ -185,55 +183,52 @@ program
     const projectPath = path.resolve(currentDir, targetDir);
 
     console.log(
-      chalk.blue(`\n🚀 Initializing AGENTS.md in ${projectPath}...\n`),
+      chalk.blue(
+        `\n🚀 Initializing Template Skill for sdd-skills-ai.agents-init in ${projectPath}...\n`,
+      ),
     );
 
     // Ensure the target directory exists (though it usually should if running from it)
     await fs.ensureDir(projectPath);
 
-    const agentsMdPath = path.join(projectPath, "AGENTS.md");
-
-    if (fs.existsSync(agentsMdPath)) {
-      console.log(
-        chalk.yellow(
-          `\n⚠️ AGENTS.md already exists at ${agentsMdPath}. Skipping creation.`,
-        ),
-      );
-      process.exit(0);
-    }
-
-    const templateContent = `# AGENTS.md
-
-A dedicated place to provide context and instructions to help AI coding agents work on this project.
-Learn more at: https://agents.md/
-
-## Setup commands
-- Install deps: \`npm install\` (or your package manager)
-- Start dev server: \`npm run dev\`
-- Run tests: \`npm run test\`
-
-## Code style
-- [Add your project's code style rules here]
-- [Example: Use functional patterns where possible]
-- [Example: Strict TypeScript]
-
-## Architecture & Context
-- [Add information about your tech stack]
-- [Add any important architectural decisions here]
-`;
+    const skillDir = path.join(
+      projectPath,
+      ".agent",
+      "skills",
+      "sdd-skills-ai.agents-init",
+    );
+    const workflowsDir = path.join(projectPath, ".agent", "workflows");
 
     try {
-      await fs.writeFile(agentsMdPath, templateContent, "utf-8");
+      await fs.ensureDir(skillDir);
+      await fs.writeFile(
+        path.join(skillDir, "SKILL.md"),
+        AGENT_INIT_SKILL,
+        "utf-8",
+      );
+
+      await fs.ensureDir(workflowsDir);
+      await fs.writeFile(
+        path.join(workflowsDir, "sdd-skills-ai.agents-init.md"),
+        AGENT_INIT_WORKFLOW,
+        "utf-8",
+      );
+
       console.log(
-        chalk.green(`\n✅ Successfully created AGENTS.md at ${agentsMdPath}`),
+        chalk.green(`\n✅ Successfully created skill at ${skillDir}/SKILL.md`),
+      );
+      console.log(
+        chalk.green(
+          `✅ Successfully created workflow at ${workflowsDir}/sdd-skills-ai.agents-init.md`,
+        ),
       );
       console.log(
         chalk.white(
-          `📝 Please edit this file to add your project-specific agent instructions.`,
+          `\n📝 To use this skill, type \`/sdd-skills-ai.agents-init\` in your chat to generate/update the AGENTS.md based on your project structure.`,
         ),
       );
     } catch (err) {
-      console.error(chalk.red(`\n❌ Failed to create AGENTS.md: ${err}`));
+      console.error(chalk.red(`\n❌ Failed to setup agent-init skill: ${err}`));
       process.exit(1);
     }
   });
