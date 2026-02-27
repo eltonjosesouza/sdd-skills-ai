@@ -4,21 +4,19 @@ This CLI acts as a wrapper to initialize your project with Spec-Driven Developme
 
 ## Concept
 
-Instead of maintaining a massive boilerplate with predefined setups for every framework, `sdd-skills-ai` handles the execution of core SDD utilities. It sets up an AI-friendly environment using tools like `@fission-ai/openspec`, GitHub's `spec-kit`, and custom `antigravity` skill packs for your team.
+The primary goal of `sdd-skills-ai` is to act as a **boilerplate that configures your IDE skills and workflows, making them truly "agentic."** Instead of maintaining complex manual setups, this CLI injects pre-configured prompts, context instructions, and AI tools into your workspace.
 
-The goal is to focus on writing specifications (`spec.md`) and letting your AI agents implement them with precision.
-In Spec-Driven Development, the specification (test) acts as the living documentation and primary driver for the code. This boilerplate emphasizes this by co-locating the `.spec.ts` files exactly alongside their implementations within focused Use Case directories:
+By orchestrating established AI-focused repositories, `sdd-skills-ai` automatically sets up the optimal environment for your AI coding assistants to thrive.
 
-```text
-src/
-  modules/
-    users/
-      useCases/
-        createUser/
-          createUser.dto.ts
-          createUser.spec.ts  <-- The Spec
-          createUser.ts       <-- The Implementation
-```
+### Supported Integrations (Out of the Box)
+We currently ship with integrations for some of the most recognized tools for Agentic IDEs:
+- [**OpenSpec**](https://github.com/fission-ai/openspec): Standardized feature specification for AI agents.
+- [**spec-kit**](https://github.com/github/spec-kit): GitHub's workflow for spec-driven engineering.
+- [**ag-kit**](https://github.com/vudovn/ag-kit): Essential agentic templates for structured workflows.
+- [**Antigravity Awesome Skills**](https://github.com/sickn33/antigravity-awesome-skills): A community-curated collection of advanced agent skills.
+
+### Bring Your Own Tools
+`sdd-skills-ai` is fully extensible. You are not limited to the default tools—you can easily **register and add new integrations** to your global configuration directly from other GitHub repositories or local folders using our interactive CLI commands.
 
 ## Usage
 
@@ -77,11 +75,9 @@ This will allow you to pick from:
 
 ## What's Included?
 
-The generated project comes with:
+When you initialize a project using `sdd-skills-ai`, you can automatically select and apply:
 
-- TypeScript configuration
-- Jest configured for Spec tracking (`ts-jest`)
-- An example `CreateUser` use case exhibiting the Spec-Driven folder organization
-- NPM scripts to immediately start testing (`npm run test`)
-- Pre-configured `spec.md` for AI agent context ([OpenSpec](https://openspec.dev/))
-- Automatic initialization of [Antigravity Awesome Skills](https://github.com/sickn33/antigravity-awesome-skills)
+- Pre-configured `spec.md` structures for AI agent context.
+- Native installation of `.agent/skills` and `.agent/workflows` into your project.
+- Ready-to-use workflows to orchestrate different agents (planning, architectural reviews, TDD execution).
+- A unified wizard to manage the lifecycle of your Agentic setups.
