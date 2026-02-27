@@ -10,6 +10,8 @@ Learn more about this convention at: [agents.md](https://agents.md/)
 - **Core Architecture Principles**:
   - **Spec-Driven Development (SDD)**: The specification (`spec.md` / `*.spec.ts`) acts as the living documentation and primary driver for the code.
   - **Co-location**: Code is organized within focused Use Case directories, emphasizing putting the `.spec.ts` files exactly alongside their implementations. (e.g., `src/modules/users/useCases/createUser/createUser.spec.ts` right next to `createUser.ts`).
+  - **Extensibility**: Provides CLI capabilities to dynamically add Custom Spec Tools and Agent Skills by modifying the user-level configuration (with commands like `add-skill` and `add-spec`).
+  - **Agent Templates**: The `spec-skills-add` command injects native templates inside `.agent/skills/` and `.agent/workflows/` so an AI coding assistant can execute these additions automatically via chat prompt commands.
   - **Dependencies**: Uses `commander` (for CLI logic), `prompts` (interactive prompts), `chalk` (styling), and `fs-extra` (filesystem operations).
 
 ## Setup commands

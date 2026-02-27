@@ -22,6 +22,14 @@ src/
 
 ## Usage
 
+The easiest way to initialize all features at once is using the interactive **wizard**:
+
+```bash
+npx sdd-skills-ai wizard my-new-project
+```
+
+Or just type \`npx sdd-skills-ai wizard\` and follow the prompts.
+
 ### 1. `npx` (No Global Install)
 
 You can immediately scaffold a new project directory using `npx` (which avoids a global install):
@@ -36,7 +44,7 @@ Or omit the project name to enter interactive mode:
 npx sdd-skills-ai init
 ```
 
-### 2. Global Install
+### 2. Global Install (Extensible Mode)
 
 If you prefer to install it globally for frequent use:
 
@@ -45,17 +53,27 @@ npm install -g sdd-skills-ai
 sdd-skills-ai init my-new-project
 ```
 
-### Applying AI Skills
+#### Modifying the Global Configuration
+When installed globally, you can dynamically add new spec and skill tools:
+- **`sdd-skills-ai add-skill`**: Adds a new interactive AI skill into your global `apply-skills` list.
+- **`sdd-skills-ai add-spec`**: Adds a new interactive spec tool into your global `init` list.
 
-You can also selectively inject AI agent skills to any project folder (like `antigravity` configuration templates) using:
+### 3. Applying AI Skills
+
+You can selectively inject AI agent skills to any project folder (like `antigravity` configuration templates) using:
 
 ```bash
-sdd-skills-ai apply-skills
+npx sdd-skills-ai apply-skills
 ```
 This will allow you to pick from:
 
 - **Antigravity Kit**: Provides standard AI workflows via `@vudovn/ag-kit init`.
 - **Awesome Skills**: Community curated tools via `antigravity-awesome-skills`.
+
+### 4. Agent Configuration & Templates
+
+- **`npx sdd-skills-ai agent-init`**: Analyzes your code and automatically creates an `AGENTS.md` context file for your AI agents to read.
+- **`npx sdd-skills-ai spec-skills-add`**: Generates AI Agent templates (`.agent/skills/` and `.agent/workflows`) into your current directory. Once added, you can ask your AI Code assistant to automatically absorb GitHub repos and add them to your global config directly from your chat prompt!
 
 ## What's Included?
 
