@@ -1,6 +1,6 @@
 {
   "name": "sdd-skills-ai",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "CLI to scaffold a Spec-Driven Organization boilerplate",
   "main": "dist/index.js",
   "bin": {

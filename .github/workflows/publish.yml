@@ -8,8 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: release
     permissions:
       contents: read
       id-token: write
@@ -20,7 +18,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: npm install
@@ -31,10 +28,5 @@ jobs:
       - name: Run Tests
         run: npm test
 
-      - name: Debug Info
-        run: |
-          npm whoami || echo "Not logged in (expected for OIDC exchange during publish)"
-          npm config list
-
       - name: Publish to NPM
-        run: npm publish --access public
+        run: npm publish --access public --provenance
