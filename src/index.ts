@@ -67,12 +67,15 @@ const promptAgentSelection = async () => {
  * Executes a command in a temporary directory and merges the results back to the project.
  * This prevents tools like ag-kit from overwriting existing project configuration.
  */
-const safeExecSkillCommand = async (
+const safeExecCommand = async (
   cmd: string,
   projectPath: string,
   agentDirName: string,
 ) => {
-  const tmpDir = path.join(os.tmpdir(), `sdd-ai-${Math.random().toString(36).substring(7)}`);
+  const tmpDir = path.join(
+    os.tmpdir(),
+    `sdd-ai-${Math.random().toString(36).substring(7)}`,
+  );
   await fs.ensureDir(tmpDir);
 
   try {
@@ -81,36 +84,54 @@ const safeExecSkillCommand = async (
     // Execute the command in the temporary directory
     execSync(cmd, { stdio: "inherit", cwd: tmpDir });
 
-    // Look for .agent directory in tmpDir (common output for many kits)
-    const tmpAgentDir = path.join(tmpDir, ".agent");
-    const targetAgentDir = path.join(projectPath, agentDirName);
+    // Merging logic that respects assistant mapping and non-destructive overwrites
+    const mergeIntoProject = async (src: string, dest: string) => {
+      await fs.ensureDir(dest);
+      const entries = await fs.readdir(src, { withFileTypes: true });
 
-    if (fs.existsSync(tmpAgentDir)) {
-      console.log(chalk.blue(`\n🔄 Merging new skills into ${agentDirName}/...`));
+      // Common generic assistant folders that should be mapped to the user's choice
+      const genericAssistantFolders = [
+        ".agent",
+        ".claude",
+        ".gemini",
+        ".cursor",
+        ".agents",
+        ".kiro",
+      ];
 
-      // Smart merge: recursive copy but don't overwrite if file exists
-      const mergeDirs = async (src: string, dest: string) => {
-        await fs.ensureDir(dest);
-        const entries = await fs.readdir(src, { withFileTypes: true });
+      for (const entry of entries) {
+        const srcPath = path.join(src, entry.name);
+        let destPath = path.join(dest, entry.name);
 
-        for (const entry of entries) {
-          const srcPath = path.join(src, entry.name);
-          const destPath = path.join(dest, entry.name);
+        // If this is a generic assistant folder, map it to the user's selected agentDirName
+        if (
+          entry.isDirectory() &&
+          genericAssistantFolders.includes(entry.name)
+        ) {
+          destPath = path.join(dest, agentDirName);
+          console.log(
+            chalk.blue(`  Mapping ${entry.name}/ to ${agentDirName}/`),
+          );
+        }
 
-          if (entry.isDirectory()) {
-            await mergeDirs(srcPath, destPath);
+        if (entry.isDirectory()) {
+          await mergeIntoProject(srcPath, destPath);
+        } else {
+          if (!fs.existsSync(destPath)) {
+            await fs.copy(srcPath, destPath);
           } else {
-            if (!fs.existsSync(destPath)) {
-              await fs.copy(srcPath, destPath);
-            } else {
-              console.log(chalk.gray(`  Skipping existing file: ${entry.name}`));
-            }
+            console.log(
+              chalk.gray(
+                `  Skipping existing file: ${path.relative(projectPath, destPath)}`,
+              ),
+            );
           }
         }
-      };
+      }
+    };
 
-      await mergeDirs(tmpAgentDir, targetAgentDir);
-    }
+    console.log(chalk.blue(`\n🔄 Merging results into project root...`));
+    await mergeIntoProject(tmpDir, projectPath);
   } catch (err) {
     console.error(chalk.red(`Error in safe execution: ${err}`));
   } finally {
@@ -172,17 +193,21 @@ const initAction = async (projectDirectory?: string, agent?: string) => {
         chalk.yellow("\n⚠️ No spec tools selected. Skipping spec setup."),
       );
     } else {
+      const selectedAgent = agent || (await promptAgentSelection());
+      if (!selectedAgent) return false;
+      const agentDirName = getAgentConfigDir(selectedAgent);
+
       for (const specId of specPrompt.specs) {
         const specConfig = config.specs.find((s: any) => s.value === specId);
         if (specConfig) {
           for (const cmdObj of specConfig.commands) {
             console.log(chalk.green(`\n${cmdObj.message}`));
             try {
-              const options: any = { stdio: "inherit" };
               if (cmdObj.useProjectDir) {
-                options.cwd = projectPath;
+                await safeExecCommand(cmdObj.cmd, projectPath, agentDirName);
+              } else {
+                execSync(cmdObj.cmd, { stdio: "inherit" });
               }
-              execSync(cmdObj.cmd, options);
             } catch (err) {
               console.log(
                 chalk.yellow(
@@ -250,15 +275,10 @@ const applySkillsAction = async (projectDirectory?: string, agent?: string) => {
       for (const cmdObj of skillConfig.commands) {
         console.log(chalk.green(`\n${cmdObj.message}`));
         try {
-          if (skillId === "antigravity-kit") {
-            // Specialized safe path for ag-kit
-            await safeExecSkillCommand(cmdObj.cmd, projectPath, agentDirName);
+          if (cmdObj.useProjectDir) {
+            await safeExecCommand(cmdObj.cmd, projectPath, agentDirName);
           } else {
-            const options: any = { stdio: "inherit" };
-            if (cmdObj.useProjectDir) {
-              options.cwd = projectPath;
-            }
-            execSync(cmdObj.cmd, options);
+            execSync(cmdObj.cmd, { stdio: "inherit" });
           }
         } catch (err) {
           console.log(chalk.red(`Error running command: ${cmdObj.cmd}`));
