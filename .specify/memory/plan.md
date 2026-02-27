@@ -1,36 +1,39 @@
-# Implementation Plan: Spec & Skills AI Agent Commands
+# Implementation Plan: Wizard Command
 
-**Branch**: `feature/spec-skills-add-templates` | **Date**: 2026-02-27
-**Input**: User request: "crie um workflow e uma skill para adicionar via agent, tem q ser template para isso pq vai ser instalado ao executar o comando spec-skills-add... crie um workflow para cada, um para add-skill e um add-spec"
+**Branch**: `feature/wizard-command` | **Date**: 2026-02-27
+**Input**: User request: "agora crie um comando chamado wizard, ele ira chamar a instalaco do specs depois a instalacao das skills depois a instalagendo do agentsmd e por fim a instalacao do de add skills e specs, todos as etapas sera perguntado se ele deseja instaalar aquekle passo ou nao"
 
 ## Summary
-To allow users to use AI agents to dynamically add new spec and skill options to their global config directly from a GitHub repository or local path, we will create two new agent skills and two matching workflows. These will be embedded as template strings in `src/templates.ts`.
+To provide a smooth onboarding experience, we will create a `wizard` command. This command will sequentially ask the user if they want to execute each of the four main setup steps:
+1. `init` (Specs initialization)
+2. `apply-skills` (Skills injection)
+3. `agent-init` (AGENTS.md setup)
+4. `spec-skills-add` (Templates for dynamic spec/skill addition)
 
-We will then introduce a new CLI command `spec-skills-add` to deploy these templates into the user's project (`.agent/skills` and `.agent/workflows`), from where they can be executed by the developer directly via their AI coding assistant.
+If the user answers "yes" to a step, the wizard will immediately invoke the corresponding logic for that step.
 
 ## Proposed Changes
 
-### `src/templates.ts` (MODIFY)
-Add four new string constants for the agent templates:
-- `ADD_SKILL_SKILL_TEMPLATE`: A `.md` file with instructions for an AI agent to read a GitHub repo/local path and execute `sdd-skills-ai add-skill`.
-- `ADD_SKILL_WORKFLOW_TEMPLATE`: A workflow that instructs the agent to run the skill above step-by-step.
-- `ADD_SPEC_SKILL_TEMPLATE`: A `.md` file instructing an AI agent to read a GitHub repo/local path and execute `sdd-skills-ai add-spec`.
-- `ADD_SPEC_WORKFLOW_TEMPLATE`: Document outlining the `add-spec` flow.
-
 ### `src/index.ts` (MODIFY)
-Add a new command: `.command("spec-skills-add")`.
-- When invoked in a project directory, it ensures `.agent/skills/sdd-skills-ai.add-skill`, `.agent/skills/sdd-skills-ai.add-spec`, and `.agent/workflows/` directories exist.
-- Writes the respective strings from `src/templates.ts` into these files.
-- Prints success messages with instructions on how to use them (e.g., `/sdd-skills-ai.add-skill <repo-url>`).
+1. **Refactor Action Handlers**: Extract the inline `.action(...)` callbacks for `init`, `apply-skills`, `agent-init`, and `spec-skills-add` into named `async` functions (e.g., `initAction`, `applySkillsAction`, `agentInitAction`, `specSkillsAddAction`).
+2. **Wire Handlers to Existing Commands**: Pass these named functions back to their respective `.command(...).action(...)` definitions.
+3. **Add `wizard` Command**:
+   - Create `.command("wizard")`.
+   - Take an optional `[project-directory]` argument.
+   - Use `prompts` to ask 4 consecutive `confirm` questions:
+     - "Do you want to initialize Spec-Driven base configuration (specs)?"
+     - "Do you want to inject AI Skills?"
+     - "Do you want to setup AGENTS.md (agent-init)?"
+     - "Do you want to install AI agent templates for adding new skills/specs?"
+   - For each "yes", await the corresponding action handler.
+   - Print a final summary when the wizard completes.
 
 ## Verification Plan
 
-1. **Build the CLI**: Run `npm run build` to check for syntax/type errors.
-2. **Setup Directories**:
-   - Create a test directory or run the command right in the `sdd-skills-ai` project.
-   - Run `node dist/index.js spec-skills-add ./`.
-3. **Verify Files**:
-   - Check if `.agent/skills/sdd-skills-ai.add-skill/SKILL.md` exists and contains correct markdown.
-   - Check if `.agent/skills/sdd-skills-ai.add-spec/SKILL.md` exists.
-   - Check if the workflows were created correctly in `.agent/workflows/`.
-4. **Agent Testing (Manual user test)**: Wait and prompt the user to use the newly copied skills and workflows with their AI assistant to ensure the instructions translate well to AI actions.
+1. **Build**: `npm run build`
+2. **Test Command**: Run `node dist/index.js wizard ./`
+3. **Verify Interactive Flow**:
+   - Answer "yes" to the first question -> observe `init` prompts appearing.
+   - Answer "no" to the second question -> observe it skips `apply-skills`.
+   - Answer "yes" to the third -> observe `AGENTS.md` and workflows generated.
+   - Answer "yes" to the fourth -> observe `spec-skills-add` templates generated.

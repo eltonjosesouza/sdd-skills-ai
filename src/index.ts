@@ -5,7 +5,14 @@ import fs from "fs-extra";
 import path from "path";
 import chalk from "chalk";
 import { execSync } from "child_process";
-import { AGENT_INIT_SKILL, AGENT_INIT_WORKFLOW } from "./templates";
+import {
+  AGENT_INIT_SKILL,
+  AGENT_INIT_WORKFLOW,
+  ADD_SKILL_SKILL_TEMPLATE,
+  ADD_SKILL_WORKFLOW_TEMPLATE,
+  ADD_SPEC_SKILL_TEMPLATE,
+  ADD_SPEC_WORKFLOW_TEMPLATE,
+} from "./templates";
 import { loadConfig, addSkill, addSpec } from "./configManager";
 
 const packageJson = require("../package.json");
@@ -17,98 +24,447 @@ program
   .description(packageJson.description)
   .version(packageJson.version);
 
+const initAction = async (projectDirectory?: string) => {
+  let targetDir = projectDirectory;
+
+  if (!targetDir) {
+    const response = await prompts({
+      type: "text",
+      name: "projectName",
+      message: "What is your project/directory named?",
+      initial: "my-spec-driven-app",
+    });
+
+    if (!response.projectName) {
+      console.log(chalk.red("Operation cancelled."));
+      return false;
+    }
+    targetDir = response.projectName;
+  }
+
+  const currentDir = process.cwd();
+  const validTargetDir = targetDir as string;
+  const projectPath = path.join(currentDir, validTargetDir);
+
+  if (!fs.existsSync(projectPath)) {
+    await fs.ensureDir(projectPath);
+    console.log(chalk.green(`\n📂 Created directory ${projectPath}`));
+  } else {
+    console.log(chalk.yellow(`\n📂 Using existing directory ${projectPath}`));
+  }
+
+  console.log(
+    chalk.blue(`\n🚀 Initializing sdd-ai config in ${projectPath}...`),
+  );
+
+  try {
+    const config = loadConfig();
+    const specPrompt = await prompts({
+      type: "multiselect",
+      name: "specs",
+      message: "Which Spec-Driven tools would you like to initialize?",
+      choices: config.specs.map((spec) => ({
+        title: spec.title,
+        value: spec.value,
+        description: spec.description,
+        selected: spec.selected,
+      })),
+      hint: "- Space to select. Return to submit",
+    });
+
+    if (!specPrompt.specs || specPrompt.specs.length === 0) {
+      console.log(
+        chalk.yellow("\n⚠️ No spec tools selected. Skipping spec setup."),
+      );
+    } else {
+      for (const specId of specPrompt.specs) {
+        const specConfig = config.specs.find((s: any) => s.value === specId);
+        if (specConfig) {
+          for (const cmdObj of specConfig.commands) {
+            console.log(chalk.green(`\n${cmdObj.message}`));
+            try {
+              const options: any = { stdio: "inherit" };
+              if (cmdObj.useProjectDir) {
+                options.cwd = projectPath;
+              }
+              execSync(cmdObj.cmd, options);
+            } catch (err) {
+              console.log(
+                chalk.yellow(
+                  `Note: Command '${cmdObj.cmd}' may have exited non-zero or was aborted, continuing...`,
+                ),
+              );
+            }
+          }
+        }
+      }
+    }
+
+    console.log(
+      chalk.green("\n✅ Setup complete! Spec-Driven architecture is ready."),
+    );
+    console.log(chalk.white("\nTo start developing, run:\n"));
+    console.log(chalk.cyan(`  cd ${validTargetDir}\n`));
+    return true;
+  } catch (error) {
+    console.error(chalk.red("Failed to initialize the configuration."));
+    console.error(error);
+    return false;
+  }
+};
+
+const applySkillsAction = async (projectDirectory?: string) => {
+  const targetDir = projectDirectory || ".";
+  const currentDir = process.cwd();
+  const projectPath = path.resolve(currentDir, targetDir);
+
+  console.log(
+    chalk.blue(
+      `\n🚀 Assisting with AI Skills Injection in ${projectPath}...\n`,
+    ),
+  );
+
+  const config = loadConfig();
+  const response = await prompts({
+    type: "multiselect",
+    name: "skills",
+    message: "Which skill packs would you like to install?",
+    choices: config.skills.map((skill: any) => ({
+      title: skill.title,
+      value: skill.value,
+      description: skill.description,
+    })),
+    hint: "- Space to select. Return to submit",
+  });
+
+  if (!response.skills || response.skills.length === 0) {
+    console.log(chalk.yellow("\nNo skills selected. Exiting."));
+    return false;
+  }
+
+  for (const skillId of response.skills) {
+    const skillConfig = config.skills.find((s: any) => s.value === skillId);
+    if (skillConfig) {
+      for (const cmdObj of skillConfig.commands) {
+        console.log(chalk.green(`\n${cmdObj.message}`));
+        try {
+          const options: any = { stdio: "inherit" };
+          if (cmdObj.useProjectDir) {
+            options.cwd = projectPath;
+          }
+          execSync(cmdObj.cmd, options);
+        } catch (err) {
+          console.log(chalk.red(`Error running command: ${cmdObj.cmd}`));
+        }
+      }
+    }
+  }
+
+  console.log(chalk.green("\n✅ Skills injection complete!"));
+  return true;
+};
+
+const agentInitAction = async (projectDirectory?: string) => {
+  const targetDir = projectDirectory || ".";
+  const currentDir = process.cwd();
+  const projectPath = path.resolve(currentDir, targetDir);
+
+  console.log(
+    chalk.blue(
+      `\n🚀 Initializing Template Skill for sdd-skills-ai.agents-init in ${projectPath}...\n`,
+    ),
+  );
+
+  await fs.ensureDir(projectPath);
+
+  const skillDir = path.join(
+    projectPath,
+    ".agent",
+    "skills",
+    "sdd-skills-ai.agents-init",
+  );
+  const workflowsDir = path.join(projectPath, ".agent", "workflows");
+
+  try {
+    await fs.ensureDir(skillDir);
+    await fs.writeFile(
+      path.join(skillDir, "SKILL.md"),
+      AGENT_INIT_SKILL,
+      "utf-8",
+    );
+
+    await fs.ensureDir(workflowsDir);
+    await fs.writeFile(
+      path.join(workflowsDir, "sdd-skills-ai.agents-init.md"),
+      AGENT_INIT_WORKFLOW,
+      "utf-8",
+    );
+
+    console.log(
+      chalk.green(`\n✅ Successfully created skill at ${skillDir}/SKILL.md`),
+    );
+    console.log(
+      chalk.green(
+        `✅ Successfully created workflow at ${workflowsDir}/sdd-skills-ai.agents-init.md`,
+      ),
+    );
+    console.log(
+      chalk.white(
+        `\n📝 To use this skill, type \`/sdd-skills-ai.agents-init\` in your chat to generate/update the AGENTS.md based on your project structure.`,
+      ),
+    );
+    return true;
+  } catch (err) {
+    console.error(chalk.red(`\n❌ Failed to setup agent-init skill: ${err}`));
+    return false;
+  }
+};
+
+const addSkillAction = async () => {
+  const response = await prompts([
+    {
+      type: "text",
+      name: "value",
+      message: "What is the unique ID for this skill? (e.g. my-custom-skill)",
+      validate: (value) => (value.length > 0 ? true : "ID is required"),
+    },
+    {
+      type: "text",
+      name: "title",
+      message: "What is the display title? (e.g. My Custom Skill)",
+      validate: (value) => (value.length > 0 ? true : "Title is required"),
+    },
+    {
+      type: "text",
+      name: "description",
+      message: "Provide a short description:",
+    },
+    {
+      type: "text",
+      name: "cmd",
+      message: "What is the bash command to install/apply this skill?",
+      validate: (value) => (value.length > 0 ? true : "Command is required"),
+    },
+    {
+      type: "confirm",
+      name: "useProjectDir",
+      message: "Should this command run inside the project directory?",
+      initial: true,
+    },
+  ]);
+
+  if (!response.value || !response.title || !response.cmd) {
+    console.log(chalk.red("Operation cancelled. Missing required fields."));
+    return false;
+  }
+
+  addSkill({
+    value: response.value,
+    title: response.title,
+    description: response.description || "",
+    commands: [
+      {
+        message: `Installing ${response.title}...`,
+        cmd: response.cmd,
+        useProjectDir: response.useProjectDir,
+      },
+    ],
+  });
+
+  console.log(
+    chalk.green(`\n✅ Skill '${response.title}' added to user config!`),
+  );
+  return true;
+};
+
+const addSpecAction = async () => {
+  const response = await prompts([
+    {
+      type: "text",
+      name: "value",
+      message: "What is the unique ID for this spec tool? (e.g. my-spec)",
+      validate: (value) => (value.length > 0 ? true : "ID is required"),
+    },
+    {
+      type: "text",
+      name: "title",
+      message: "What is the display title? (e.g. My Custom Spec)",
+      validate: (value) => (value.length > 0 ? true : "Title is required"),
+    },
+    {
+      type: "text",
+      name: "description",
+      message: "Provide a short description:",
+    },
+    {
+      type: "text",
+      name: "cmd",
+      message: "What is the bash command to initialize this tool?",
+      validate: (value) => (value.length > 0 ? true : "Command is required"),
+    },
+    {
+      type: "confirm",
+      name: "useProjectDir",
+      message: "Should this command run inside the project directory?",
+      initial: true,
+    },
+  ]);
+
+  if (!response.value || !response.title || !response.cmd) {
+    console.log(chalk.red("Operation cancelled. Missing required fields."));
+    return false;
+  }
+
+  addSpec({
+    value: response.value,
+    title: response.title,
+    description: response.description || "",
+    selected: true,
+    commands: [
+      {
+        message: `Running initialization for ${response.title}...`,
+        cmd: response.cmd,
+        useProjectDir: response.useProjectDir,
+      },
+    ],
+  });
+
+  console.log(
+    chalk.green(`\n✅ Spec tool '${response.title}' added to user config!`),
+  );
+  return true;
+};
+
+const specSkillsAddAction = async (projectDirectory?: string) => {
+  const targetDir = projectDirectory || ".";
+  const currentDir = process.cwd();
+  const projectPath = path.resolve(currentDir, targetDir);
+
+  console.log(
+    chalk.blue(`\n🚀 Initializing Template Skills down to ${projectPath}...\n`),
+  );
+
+  await fs.ensureDir(projectPath);
+
+  const skillsDir = path.join(projectPath, ".agent", "skills");
+  const workflowsDir = path.join(projectPath, ".agent", "workflows");
+
+  const addSkillDir = path.join(skillsDir, "sdd-skills-ai.add-skill");
+  const addSpecDir = path.join(skillsDir, "sdd-skills-ai.add-spec");
+
+  try {
+    // Create skills
+    await fs.ensureDir(addSkillDir);
+    await fs.writeFile(
+      path.join(addSkillDir, "SKILL.md"),
+      ADD_SKILL_SKILL_TEMPLATE,
+      "utf-8",
+    );
+
+    await fs.ensureDir(addSpecDir);
+    await fs.writeFile(
+      path.join(addSpecDir, "SKILL.md"),
+      ADD_SPEC_SKILL_TEMPLATE,
+      "utf-8",
+    );
+
+    // Create workflows
+    await fs.ensureDir(workflowsDir);
+    await fs.writeFile(
+      path.join(workflowsDir, "sdd-skills-ai.add-skill.md"),
+      ADD_SKILL_WORKFLOW_TEMPLATE,
+      "utf-8",
+    );
+    await fs.writeFile(
+      path.join(workflowsDir, "sdd-skills-ai.add-spec.md"),
+      ADD_SPEC_WORKFLOW_TEMPLATE,
+      "utf-8",
+    );
+
+    console.log(
+      chalk.green(`✅ Successfully created skill at ${addSkillDir}/SKILL.md`),
+    );
+    console.log(
+      chalk.green(`✅ Successfully created skill at ${addSpecDir}/SKILL.md`),
+    );
+    console.log(
+      chalk.green(`✅ Successfully created workflows in ${workflowsDir}`),
+    );
+
+    console.log(chalk.white(`\n📝 To add a new skill via agent, type:`));
+    console.log(
+      chalk.cyan(`   /sdd-skills-ai.add-skill <github-url-or-local-path>`),
+    );
+    console.log(chalk.white(`\n📝 To add a new spec tool via agent, type:`));
+    console.log(
+      chalk.cyan(`   /sdd-skills-ai.add-spec <github-url-or-local-path>\n`),
+    );
+    return true;
+  } catch (err) {
+    console.error(
+      chalk.red(`\n❌ Failed to setup spec-skills-add templates: ${err}`),
+    );
+    return false;
+  }
+};
+
+const wizardAction = async (projectDirectory?: string) => {
+  console.log(chalk.blue("\n🧙‍♂️ Welcome to the SDD Skills AI Wizard!\n"));
+
+  const qInit = await prompts({
+    type: "confirm",
+    name: "run",
+    message:
+      "Do you want to initialize Spec-Driven base configuration (specs)?",
+    initial: true,
+  });
+  if (qInit.run) {
+    await initAction(projectDirectory);
+  }
+
+  const qSkills = await prompts({
+    type: "confirm",
+    name: "run",
+    message: "Do you want to inject AI Skills?",
+    initial: true,
+  });
+  if (qSkills.run) {
+    await applySkillsAction(projectDirectory);
+  }
+
+  const qAgentInit = await prompts({
+    type: "confirm",
+    name: "run",
+    message: "Do you want to setup AGENTS.md (agent-init)?",
+    initial: true,
+  });
+  if (qAgentInit.run) {
+    await agentInitAction(projectDirectory);
+  }
+
+  const qSpecSkills = await prompts({
+    type: "confirm",
+    name: "run",
+    message:
+      "Do you want to install AI agent templates for adding new skills/specs?",
+    initial: true,
+  });
+  if (qSpecSkills.run) {
+    await specSkillsAddAction(projectDirectory);
+  }
+
+  console.log(chalk.green("\n✨ Wizard complete! Happy coding!\n"));
+};
+
 program
   .command("init")
   .description(
     "Initialize the Spec-Driven base configuration in a specific directory",
   )
   .argument("[project-directory]", "Directory to create the project in")
-  .action(async (projectDirectory) => {
-    let targetDir = projectDirectory;
-
-    if (!targetDir) {
-      const response = await prompts({
-        type: "text",
-        name: "projectName",
-        message: "What is your project/directory named?",
-        initial: "my-spec-driven-app",
-      });
-
-      if (!response.projectName) {
-        console.log(chalk.red("Operation cancelled."));
-        process.exit(1);
-      }
-
-      targetDir = response.projectName;
-    }
-
-    const currentDir = process.cwd();
-    const projectPath = path.join(currentDir, targetDir);
-
-    if (!fs.existsSync(projectPath)) {
-      await fs.ensureDir(projectPath);
-      console.log(chalk.green(`\n📂 Created directory ${projectPath}`));
-    } else {
-      console.log(chalk.yellow(`\n📂 Using existing directory ${projectPath}`));
-    }
-
-    console.log(
-      chalk.blue(`\n🚀 Initializing sdd-ai config in ${projectPath}...`),
-    );
-
-    try {
-      const config = loadConfig();
-      const specPrompt = await prompts({
-        type: "multiselect",
-        name: "specs",
-        message: "Which Spec-Driven tools would you like to initialize?",
-        choices: config.specs.map((spec) => ({
-          title: spec.title,
-          value: spec.value,
-          description: spec.description,
-          selected: spec.selected,
-        })),
-        hint: "- Space to select. Return to submit",
-      });
-
-      if (!specPrompt.specs || specPrompt.specs.length === 0) {
-        console.log(
-          chalk.yellow("\n⚠️ No spec tools selected. Skipping spec setup."),
-        );
-      } else {
-        for (const specId of specPrompt.specs) {
-          const specConfig = config.specs.find((s: any) => s.value === specId);
-          if (specConfig) {
-            for (const cmdObj of specConfig.commands) {
-              console.log(chalk.green(`\n${cmdObj.message}`));
-              try {
-                const options: any = { stdio: "inherit" };
-                if (cmdObj.useProjectDir) {
-                  options.cwd = projectPath;
-                }
-                execSync(cmdObj.cmd, options);
-              } catch (err) {
-                console.log(
-                  chalk.yellow(
-                    `Note: Command '${cmdObj.cmd}' may have exited non-zero or was aborted, continuing...`,
-                  ),
-                );
-              }
-            }
-          }
-        }
-      }
-
-      console.log(
-        chalk.green("\n✅ Setup complete! Spec-Driven architecture is ready."),
-      );
-      console.log(chalk.white("\nTo start developing, run:\n"));
-      console.log(chalk.cyan(`  cd ${targetDir}\n`));
-    } catch (error) {
-      console.error(chalk.red("Failed to initialize the configuration."));
-      console.error(error);
-      process.exit(1);
-    }
+  .action(async (dir) => {
+    const success = await initAction(dir);
+    if (!success) process.exit(1);
   });
 
 program
@@ -120,54 +476,9 @@ program
     "[project-directory]",
     "Directory to inject the skills into (defaults to current directory)",
   )
-  .action(async (projectDirectory) => {
-    const targetDir = projectDirectory || ".";
-    const currentDir = process.cwd();
-    const projectPath = path.resolve(currentDir, targetDir);
-
-    console.log(
-      chalk.blue(
-        `\n🚀 Assisting with AI Skills Injection in ${projectPath}...\n`,
-      ),
-    );
-
-    const config = loadConfig();
-    const response = await prompts({
-      type: "multiselect",
-      name: "skills",
-      message: "Which skill packs would you like to install?",
-      choices: config.skills.map((skill: any) => ({
-        title: skill.title,
-        value: skill.value,
-        description: skill.description,
-      })),
-      hint: "- Space to select. Return to submit",
-    });
-
-    if (!response.skills || response.skills.length === 0) {
-      console.log(chalk.yellow("\nNo skills selected. Exiting."));
-      process.exit(0);
-    }
-
-    for (const skillId of response.skills) {
-      const skillConfig = config.skills.find((s: any) => s.value === skillId);
-      if (skillConfig) {
-        for (const cmdObj of skillConfig.commands) {
-          console.log(chalk.green(`\n${cmdObj.message}`));
-          try {
-            const options: any = { stdio: "inherit" };
-            if (cmdObj.useProjectDir) {
-              options.cwd = projectPath;
-            }
-            execSync(cmdObj.cmd, options);
-          } catch (err) {
-            console.log(chalk.red(`Error running command: ${cmdObj.cmd}`));
-          }
-        }
-      }
-    }
-
-    console.log(chalk.green("\n✅ Skills injection complete!"));
+  .action(async (dir) => {
+    const success = await applySkillsAction(dir);
+    if (!success) process.exit(1);
   });
 
 program
@@ -179,179 +490,50 @@ program
     "[project-directory]",
     "Directory to create the AGENTS.md file in (defaults to current directory)",
   )
-  .action(async (projectDirectory) => {
-    const targetDir = projectDirectory || ".";
-    const currentDir = process.cwd();
-    const projectPath = path.resolve(currentDir, targetDir);
-
-    console.log(
-      chalk.blue(
-        `\n🚀 Initializing Template Skill for sdd-skills-ai.agents-init in ${projectPath}...\n`,
-      ),
-    );
-
-    // Ensure the target directory exists (though it usually should if running from it)
-    await fs.ensureDir(projectPath);
-
-    const skillDir = path.join(
-      projectPath,
-      ".agent",
-      "skills",
-      "sdd-skills-ai.agents-init",
-    );
-    const workflowsDir = path.join(projectPath, ".agent", "workflows");
-
-    try {
-      await fs.ensureDir(skillDir);
-      await fs.writeFile(
-        path.join(skillDir, "SKILL.md"),
-        AGENT_INIT_SKILL,
-        "utf-8",
-      );
-
-      await fs.ensureDir(workflowsDir);
-      await fs.writeFile(
-        path.join(workflowsDir, "sdd-skills-ai.agents-init.md"),
-        AGENT_INIT_WORKFLOW,
-        "utf-8",
-      );
-
-      console.log(
-        chalk.green(`\n✅ Successfully created skill at ${skillDir}/SKILL.md`),
-      );
-      console.log(
-        chalk.green(
-          `✅ Successfully created workflow at ${workflowsDir}/sdd-skills-ai.agents-init.md`,
-        ),
-      );
-      console.log(
-        chalk.white(
-          `\n📝 To use this skill, type \`/sdd-skills-ai.agents-init\` in your chat to generate/update the AGENTS.md based on your project structure.`,
-        ),
-      );
-    } catch (err) {
-      console.error(chalk.red(`\n❌ Failed to setup agent-init skill: ${err}`));
-      process.exit(1);
-    }
+  .action(async (dir) => {
+    const success = await agentInitAction(dir);
+    if (!success) process.exit(1);
   });
 
 program
   .command("add-skill")
   .description("Add a new AI skill to the global configuration")
   .action(async () => {
-    const response = await prompts([
-      {
-        type: "text",
-        name: "value",
-        message: "What is the unique ID for this skill? (e.g. my-custom-skill)",
-        validate: (value) => (value.length > 0 ? true : "ID is required"),
-      },
-      {
-        type: "text",
-        name: "title",
-        message: "What is the display title? (e.g. My Custom Skill)",
-        validate: (value) => (value.length > 0 ? true : "Title is required"),
-      },
-      {
-        type: "text",
-        name: "description",
-        message: "Provide a short description:",
-      },
-      {
-        type: "text",
-        name: "cmd",
-        message: "What is the bash command to install/apply this skill?",
-        validate: (value) => (value.length > 0 ? true : "Command is required"),
-      },
-      {
-        type: "confirm",
-        name: "useProjectDir",
-        message: "Should this command run inside the project directory?",
-        initial: true,
-      },
-    ]);
-
-    if (!response.value || !response.title || !response.cmd) {
-      console.log(chalk.red("Operation cancelled. Missing required fields."));
-      process.exit(1);
-    }
-
-    addSkill({
-      value: response.value,
-      title: response.title,
-      description: response.description || "",
-      commands: [
-        {
-          message: `Installing ${response.title}...`,
-          cmd: response.cmd,
-          useProjectDir: response.useProjectDir,
-        },
-      ],
-    });
-
-    console.log(
-      chalk.green(`\n✅ Skill '${response.title}' added to user config!`),
-    );
+    const success = await addSkillAction();
+    if (!success) process.exit(1);
   });
 
 program
   .command("add-spec")
   .description("Add a new Spec-Driven tool to the global configuration")
   .action(async () => {
-    const response = await prompts([
-      {
-        type: "text",
-        name: "value",
-        message: "What is the unique ID for this spec tool? (e.g. my-spec)",
-        validate: (value) => (value.length > 0 ? true : "ID is required"),
-      },
-      {
-        type: "text",
-        name: "title",
-        message: "What is the display title? (e.g. My Custom Spec)",
-        validate: (value) => (value.length > 0 ? true : "Title is required"),
-      },
-      {
-        type: "text",
-        name: "description",
-        message: "Provide a short description:",
-      },
-      {
-        type: "text",
-        name: "cmd",
-        message: "What is the bash command to initialize this tool?",
-        validate: (value) => (value.length > 0 ? true : "Command is required"),
-      },
-      {
-        type: "confirm",
-        name: "useProjectDir",
-        message: "Should this command run inside the project directory?",
-        initial: true,
-      },
-    ]);
+    const success = await addSpecAction();
+    if (!success) process.exit(1);
+  });
 
-    if (!response.value || !response.title || !response.cmd) {
-      console.log(chalk.red("Operation cancelled. Missing required fields."));
-      process.exit(1);
-    }
+program
+  .command("spec-skills-add")
+  .description(
+    "Generates AI agent templates to dynamically add new specs and skills",
+  )
+  .argument(
+    "[project-directory]",
+    "Directory to install the templates into (defaults to current directory)",
+  )
+  .action(async (dir) => {
+    const success = await specSkillsAddAction(dir);
+    if (!success) process.exit(1);
+  });
 
-    addSpec({
-      value: response.value,
-      title: response.title,
-      description: response.description || "",
-      selected: true,
-      commands: [
-        {
-          message: `Running initialization for ${response.title}...`,
-          cmd: response.cmd,
-          useProjectDir: response.useProjectDir,
-        },
-      ],
-    });
-
-    console.log(
-      chalk.green(`\n✅ Spec tool '${response.title}' added to user config!`),
-    );
+program
+  .command("wizard")
+  .description("Interactive wizard to step through all setup phases")
+  .argument(
+    "[project-directory]",
+    "Directory to operate on (defaults to current directory)",
+  )
+  .action(async (dir) => {
+    await wizardAction(dir);
   });
 
 program.parse(process.argv);
