@@ -8,8 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: release
     permissions:
       contents: read
       id-token: write
@@ -33,4 +31,4 @@ jobs:
       - name: Publish to NPM
         run: npm publish --access public --provenance
         env:
-          NODE_AUTH_TOKEN: "" # Ensure no fake token is override OIDC
+          NODE_AUTH_TOKEN: "" # Ensure no inherited token sabotages OIDC
