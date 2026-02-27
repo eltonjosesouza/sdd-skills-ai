@@ -1,96 +1,121 @@
-# SDD Skills AI
+# 🚀 SDD Skills AI: The Universal Agentic IDE Boilerplate 📦
 
-This CLI acts as a wrapper to initialize your project with Spec-Driven Development tools: `@fission-ai/openspec`, `spec-kit`, `@vudovn/ag-kit`, and `antigravity-awesome-skills`.
+> Turn any project into a high-performance **Agentic IDE** in under 60 seconds. One wizard to rule them all.
 
-## Concept
+[![npm version](https://img.shields.io/npm/v/sdd-skills-ai.svg?style=flat-square)](https://www.npmjs.com/package/sdd-skills-ai)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/eltonjosesouza/sdd-skills-ai/pulls)
+[![Downloads](https://img.shields.io/npm/dt/sdd-skills-ai.svg?style=flat-square)](https://www.npmjs.com/package/sdd-skills-ai)
 
-The primary goal of `sdd-skills-ai` is to act as a **boilerplate that configures your IDE skills and workflows, making them truly "agentic."** Instead of maintaining complex manual setups, this CLI injects pre-configured prompts, context instructions, and AI tools into your workspace.
+`sdd-skills-ai` is a polyglot CLI orchestrator that prepares your workspace for the next generation of AI development. It bridges the gap between your code and elite AI assistants like **Claude Code, Gemini CLI, Cursor, and Windsurf**.
 
-By orchestrating established AI-focused repositories, `sdd-skills-ai` automatically sets up the optimal environment for your AI coding assistants to thrive.
+---
 
-### Supported Integrations (Out of the Box)
-We currently ship with integrations for some of the most recognized tools for Agentic IDEs:
-- [**OpenSpec**](https://github.com/fission-ai/openspec): Standardized feature specification for AI agents.
-- [**spec-kit**](https://github.com/github/spec-kit): GitHub's workflow for spec-driven engineering.
-- [**ag-kit**](https://github.com/vudovn/ag-kit): Essential agentic templates for structured workflows.
-- [**Antigravity Awesome Skills**](https://github.com/sickn33/antigravity-awesome-skills): A community-curated collection of advanced agent skills.
+## 🧭 Table of Contents
+- [🚀 New Here? Start Here!](#-new-here-start-here)
+- [⚡ Quick Start](#-quick-start-1-minute)
+- [🔌 Compatibility & Invocation](#-compatibility--invocation)
+- [📦 Integrated Ecosystem](#-integrated-ecosystem)
+- [🛠 CLI Command Reference](#-cli-command-reference)
+- [🔌 Extensibility](#-bring-your-own-tools)
+- [⚖️ License](#license)
 
-## Compatibility & Invocation
+---
 
-`sdd-skills-ai` outputs universal `SKILL.md` files and workspace configurations that play nicely with any AI coding assistant supporting local agentic skills or context reading.
+## 🚀 New Here? Start Here!
 
-| Tool            | Type | Setup Result Location |
-| :-------------- | :--- | :------------------------------------------------ |
-| **Claude Code** | CLI  | `.claude/skills/` (if mapped) or standard config  |
-| **Gemini CLI**  | CLI  | `.gemini/skills/` (if mapped)                     |
-| **Cursor**      | IDE  | Reads `.cursorrules` / `.cursor/skills/`          |
-| **Kiro IDE**    | IDE  | Workspace: `.kiro/skills/`                        |
-| **Antigravity** | IDE  | Workspace: `.agent/skills/` and `.agent/workflows`|
-| **OpenCode**    | CLI  | `.agents/skills/`                                 |
+### 1. 🐣 Context: What is this?
+AI Agents are smart, but they are "workspace-blind" by default. They don't know your preferred specs format ([OpenSpec](https://github.com/fission-ai/openspec)) or your advanced agentic workflows.
+`sdd-skills-ai` is the **missing link**. It automatically configures and injects the "brain" (skills and workflows) your AI needs to actually *do* the work instead of just talking about it.
 
-### Bring Your Own Tools
-`sdd-skills-ai` is fully extensible. You are not limited to the default tools—you can easily **register and add new integrations** to your global configuration directly from other GitHub repositories or local folders using our interactive CLI commands.
+### 2. 🎯 The Goal
+Standardize your development environment so **any** AI assistant can immediately understand your project architecture, rules, and specialized tools.
 
-## Usage
+---
 
-The easiest way to initialize all features at once is using the interactive **wizard**:
+## ⚡ Quick Start (1 minute)
 
-```bash
-npx sdd-skills-ai wizard my-new-project
-```
-
-Or just type \`npx sdd-skills-ai wizard\` and follow the prompts.
-
-### 1. `npx` (No Global Install)
-
-You can immediately scaffold a new project directory using `npx` (which avoids a global install):
+No installation required. Run the interactive wizard directly:
 
 ```bash
-npx sdd-skills-ai init my-new-project
+npx sdd-skills-ai wizard
 ```
 
-Or omit the project name to enter interactive mode:
+The wizard will guide you through:
+1. 📋 **Workflow Specs** — Setup `spec.md` and feature planning tools.
+2. 🧠 **Elite Skills** — Inject 950+ community skills or specialized ag-kit templates.
+3. 📝 **Agent Identity** — Create a project-aware `AGENTS.md`.
+4. 🔌 **Autonomous Tools** — Enable your AI to add its own skills later.
+
+---
+
+## 🔌 Compatibility & Invocation
+
+`sdd-skills-ai` follows the universal `SKILL.md` standard. Choose your assistant and it just works:
+
+| AI Assistant | Type | Path | Invocation Style |
+| :--- | :--- | :--- | :--- |
+| **Claude Code** | CLI | `.claude/skills/` | `>> /skill-name help...` |
+| **Gemini CLI** | CLI | `.gemini/skills/` | `Use skill-name to...` |
+| **Cursor** | IDE | `.cursor/skills/` | `@skill-name` inside Chat |
+| **Antigravity** | IDE | `.agent/skills/` | `(Agent Mode) active` |
+| **Codex CLI** | CLI | `.codex/skills/` | `(Auto) Loads on-demand` |
+| **Kiro IDE** | IDE | `.kiro/skills/` | `/skill-name` in Console |
+| **OpenCode** | CLI | `.agents/skills/` | `opencode run @skill` |
+| **Windsurf** | IDE | `.agent/skills/` | `(Chat)` context-aware |
+
+---
+
+## 📦 Integrated Ecosystem
+
+We ship with natively supported integrations for the industry's best SDD tools:
+
+- [**OpenSpec**](https://github.com/fission-ai/openspec) — Living specifications for AI-driven features.
+- [**spec-kit**](https://github.com/github/spec-kit) — GitHub's official spec-driven implementation workflow.
+- [**ag-kit**](https://github.com/vudovn/ag-kit) — Essential agentic primitives for `.agent/` folders.
+- [**Antigravity Awesome Skills**](https://github.com/sickn33/antigravity-awesome-skills) — The world's largest collection (950+) of agentic skills.
+
+---
+
+## 🛠 CLI Command Reference
+
+### ✨ Core Commands
+```bash
+sdd-skills-ai wizard [dir]       # The full interactive experience
+sdd-skills-ai init [dir]         # Setup spec-driven architecture base
+```
+
+### 🧠 Skills & Context
+```bash
+sdd-skills-ai apply-skills [dir] # Inject selected skill packs
+sdd-skills-ai agent-init [dir]   # Initialize AGENTS.md context
+sdd-skills-ai spec-skills-add    # Give your Agent power to add tools
+```
+
+---
+
+## 🔌 Bring Your Own Tools
+
+`sdd-skills-ai` is built for extensibility. Mix and match any source:
 
 ```bash
-npx sdd-skills-ai init
+# Register a custom GitHub skill repository
+sdd-skills-ai add-skill https://github.com/your-org/my-private-skills
+
+# Register a local spec-driven tool
+sdd-skills-ai add-spec ./local-tools/my-spec-kit
 ```
 
-### 2. Global Install (Extensible Mode)
+---
 
-If you prefer to install it globally for frequent use:
+## 🤝 Community & Support
 
-```bash
-npm install -g sdd-skills-ai
-sdd-skills-ai init my-new-project
-```
+- ⭐ **Star this repo** if this tool saves you time.
+- 🐛 **Report issues** in the [GitHub Issues](https://github.com/eltonjosesouza/sdd-skills-ai/issues).
+- 🤝 **Contribute** by adding new templates or fixing bugs.
 
-#### Modifying the Global Configuration
-When installed globally, you can dynamically add new spec and skill tools:
-- **`sdd-skills-ai add-skill`**: Adds a new interactive AI skill into your global `apply-skills` list.
-- **`sdd-skills-ai add-spec`**: Adds a new interactive spec tool into your global `init` list.
+---
 
-### 3. Applying AI Skills
+## License
 
-You can selectively inject AI agent skills to any project folder (like `antigravity` configuration templates) using:
-
-```bash
-npx sdd-skills-ai apply-skills
-```
-This will allow you to pick from:
-
-- **Antigravity Kit**: Provides standard AI workflows via `@vudovn/ag-kit init`.
-- **Awesome Skills**: Community curated tools via `antigravity-awesome-skills`.
-
-### 4. Agent Configuration & Templates
-
-- **`npx sdd-skills-ai agent-init`**: Analyzes your code and automatically creates an `AGENTS.md` context file for your AI agents to read.
-- **`npx sdd-skills-ai spec-skills-add`**: Generates AI Agent templates (`.agent/skills/` and `.agent/workflows`) into your current directory. Once added, you can ask your AI Code assistant to automatically absorb GitHub repos and add them to your global config directly from your chat prompt!
-
-## What's Included?
-
-When you initialize a project using `sdd-skills-ai`, you can automatically select and apply:
-
-- Pre-configured `spec.md` structures for AI agent context.
-- Native installation of `.agent/skills` and `.agent/workflows` into your project.
-- Ready-to-use workflows to orchestrate different agents (planning, architectural reviews, TDD execution).
-- A unified wizard to manage the lifecycle of your Agentic setups.
+MIT © [sdd-skills-ai contributors](https://github.com/eltonjosesouza/sdd-skills-ai)
