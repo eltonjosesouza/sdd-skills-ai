@@ -24,6 +24,44 @@ program
   .description(packageJson.description)
   .version(packageJson.version);
 
+/**
+ * Maps an agent name to its configuration directory.
+ */
+const getAgentConfigDir = (agent: string): string => {
+  const mapping: Record<string, string> = {
+    antigravity: ".agent",
+    claude: ".claude",
+    gemini: ".gemini",
+    cursor: ".cursor",
+    kiro: ".kiro",
+    opencode: ".agents",
+    windsurf: ".agent",
+  };
+  return mapping[agent.toLowerCase()] || ".agent";
+};
+
+/**
+ * Prompts user to select the target AI assistant.
+ */
+const promptAgentSelection = async () => {
+  const response = await prompts({
+    type: "select",
+    name: "agent",
+    message: "Which AI Assistant is the target for these skills/workflows?",
+    choices: [
+      { title: "Antigravity (.agent/)", value: "antigravity" },
+      { title: "Claude Code (.claude/)", value: "claude" },
+      { title: "Gemini CLI (.gemini/)", value: "gemini" },
+      { title: "Cursor (.cursor/)", value: "cursor" },
+      { title: "Kiro IDE (.kiro/)", value: "kiro" },
+      { title: "OpenCode (.agents/)", value: "opencode" },
+      { title: "Windsurf (.agent/)", value: "windsurf" },
+    ],
+    initial: 0,
+  });
+  return response.agent;
+};
+
 const initAction = async (projectDirectory?: string) => {
   let targetDir = projectDirectory;
 
@@ -113,7 +151,7 @@ const initAction = async (projectDirectory?: string) => {
   }
 };
 
-const applySkillsAction = async (projectDirectory?: string) => {
+const applySkillsAction = async (projectDirectory?: string, agent?: string) => {
   const targetDir = projectDirectory || ".";
   const currentDir = process.cwd();
   const projectPath = path.resolve(currentDir, targetDir);
@@ -124,6 +162,13 @@ const applySkillsAction = async (projectDirectory?: string) => {
     ),
   );
 
+  const selectedAgent = agent || (await promptAgentSelection());
+  if (!selectedAgent) {
+    console.log(chalk.red("Operation cancelled."));
+    return false;
+  }
+
+  const agentDirName = getAgentConfigDir(selectedAgent);
   const config = loadConfig();
   const response = await prompts({
     type: "multiselect",
@@ -160,30 +205,36 @@ const applySkillsAction = async (projectDirectory?: string) => {
     }
   }
 
-  console.log(chalk.green("\n✅ Skills injection complete!"));
+  console.log(
+    chalk.green(`\n✅ Skills injection complete (Target: ${agentDirName}/)!`),
+  );
   return true;
 };
 
-const agentInitAction = async (projectDirectory?: string) => {
+const agentInitAction = async (projectDirectory?: string, agent?: string) => {
   const targetDir = projectDirectory || ".";
   const currentDir = process.cwd();
   const projectPath = path.resolve(currentDir, targetDir);
 
   console.log(
     chalk.blue(
-      `\n🚀 Initializing Template Skill for sdd-skills-ai.agents-init in ${projectPath}...\n`,
+      `\n🚀 Initializing AGENTS.md and context in ${projectPath}...\n`,
     ),
   );
 
   await fs.ensureDir(projectPath);
 
+  const selectedAgent = agent || (await promptAgentSelection());
+  if (!selectedAgent) return false;
+
+  const agentDirName = getAgentConfigDir(selectedAgent);
   const skillDir = path.join(
     projectPath,
-    ".agent",
+    agentDirName,
     "skills",
     "sdd-skills-ai.agents-init",
   );
-  const workflowsDir = path.join(projectPath, ".agent", "workflows");
+  const workflowsDir = path.join(projectPath, agentDirName, "workflows");
 
   try {
     await fs.ensureDir(skillDir);
@@ -335,7 +386,10 @@ const addSpecAction = async () => {
   return true;
 };
 
-const specSkillsAddAction = async (projectDirectory?: string) => {
+const specSkillsAddAction = async (
+  projectDirectory?: string,
+  agent?: string,
+) => {
   const targetDir = projectDirectory || ".";
   const currentDir = process.cwd();
   const projectPath = path.resolve(currentDir, targetDir);
@@ -346,8 +400,12 @@ const specSkillsAddAction = async (projectDirectory?: string) => {
 
   await fs.ensureDir(projectPath);
 
-  const skillsDir = path.join(projectPath, ".agent", "skills");
-  const workflowsDir = path.join(projectPath, ".agent", "workflows");
+  const selectedAgent = agent || (await promptAgentSelection());
+  if (!selectedAgent) return false;
+
+  const agentDirName = getAgentConfigDir(selectedAgent);
+  const skillsDir = path.join(projectPath, agentDirName, "skills");
+  const workflowsDir = path.join(projectPath, agentDirName, "workflows");
 
   const addSkillDir = path.join(skillsDir, "sdd-skills-ai.add-skill");
   const addSpecDir = path.join(skillsDir, "sdd-skills-ai.add-spec");
@@ -411,6 +469,8 @@ const specSkillsAddAction = async (projectDirectory?: string) => {
 const wizardAction = async (projectDirectory?: string) => {
   console.log(chalk.blue("\n🧙‍♂️ Welcome to the SDD Skills AI Wizard!\n"));
 
+  let selectedAgent: string | undefined;
+
   const qInit = await prompts({
     type: "confirm",
     name: "run",
@@ -429,7 +489,10 @@ const wizardAction = async (projectDirectory?: string) => {
     initial: true,
   });
   if (qSkills.run) {
-    await applySkillsAction(projectDirectory);
+    selectedAgent = await promptAgentSelection();
+    if (selectedAgent) {
+      await applySkillsAction(projectDirectory, selectedAgent);
+    }
   }
 
   const qAgentInit = await prompts({
@@ -439,7 +502,10 @@ const wizardAction = async (projectDirectory?: string) => {
     initial: true,
   });
   if (qAgentInit.run) {
-    await agentInitAction(projectDirectory);
+    if (!selectedAgent) selectedAgent = await promptAgentSelection();
+    if (selectedAgent) {
+      await agentInitAction(projectDirectory, selectedAgent);
+    }
   }
 
   const qSpecSkills = await prompts({
@@ -450,7 +516,10 @@ const wizardAction = async (projectDirectory?: string) => {
     initial: true,
   });
   if (qSpecSkills.run) {
-    await specSkillsAddAction(projectDirectory);
+    if (!selectedAgent) selectedAgent = await promptAgentSelection();
+    if (selectedAgent) {
+      await specSkillsAddAction(projectDirectory, selectedAgent);
+    }
   }
 
   console.log(chalk.green("\n✨ Wizard complete! Happy coding!\n"));
