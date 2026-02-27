@@ -1,10 +1,10 @@
 {
-  "name": "sdd-ai",
+  "name": "sdd-skills-ai",
   "version": "1.0.0",
   "description": "CLI to scaffold a Spec-Driven Organization boilerplate",
   "main": "dist/index.js",
   "bin": {
-    "sdd-ai": "./dist/index.js"
+    "sdd-skills-ai": "./dist/index.js"
   },
   "scripts": {
     "build": "tsup src/index.ts --format cjs --clean",
