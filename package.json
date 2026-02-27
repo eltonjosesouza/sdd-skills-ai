@@ -4,7 +4,7 @@
   "description": "CLI to scaffold a Spec-Driven Organization boilerplate",
   "main": "dist/index.js",
   "bin": {
-    "sdd-skills-ai": "./dist/index.js"
+    "sdd-skills-ai": "dist/index.js"
   },
   "scripts": {
     "build": "tsup src/index.ts --format cjs --clean",
@@ -18,7 +18,24 @@
     "spec-driven",
     "boilerplate"
   ],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eltonjosesouza/sdd-skills-ai.git"
+  },
+  "bugs": {
+    "url": "https://github.com/eltonjosesouza/sdd-skills-ai/issues"
+  },
+  "homepage": "https://github.com/eltonjosesouza/sdd-skills-ai#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "config.json",
+    "README.md",
+    "AGENTS.md"
+  ],
+  "author": "Elton Jose de Souza",
   "license": "MIT",
   "dependencies": {
     "chalk": "^4.1.2",
