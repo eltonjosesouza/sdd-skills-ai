@@ -4,11 +4,11 @@ A dedicated place to provide context and instructions to help AI coding agents w
 Learn more about this convention at: [agents.md](https://agents.md/)
 
 ## Context & Architecture
-- **Description**: \`sdd-skills-ai\` is a CLI application that acts as a wrapper to scaffold a Spec-Driven Organization boilerplate. It sets up an AI-friendly environment using tools like \`@fission-ai/openspec\`, GitHub's \`spec-kit\`, and custom \`antigravity\` skill packs.
+- **Description**: \`sdd-skills-ai\` is a polyglot CLI application that acts as an "Agentic IDE" boilerplate. It prepares your workspace to be compatible with multiple AI coding assistants (Claude Code, Gemini CLI, Cursor, Copilot, etc.) by bridging them with established SDD (Spec-Driven Development) repositories.
 - **Language**: TypeScript / Node.js
 - **Build tool**: \`tsup\` mapping to CommonJS (CJS).
 - **Core Architecture Principles**:
-  - **Agentic IDE Configuration**: The primary purpose of this tool is to scaffold workflows and contexts that make IDEs and coding agents more capable.
+  - **Universal Agentic Boilerplate**: The primary purpose of this tool is to scaffold workflows, templates, and contexts that make *any* AI coding assistant more capable within your workspace.
   - **Repurposing Established Repos**: Bootstraps the workspace using well-known repositories like [spec-kit](https://github.com/github/spec-kit), [OpenSpec](https://github.com/fission-ai/openspec), and [Antigravity Awesome Skills](https://github.com/sickn33/antigravity-awesome-skills).
   - **Extensibility**: Provides CLI capabilities to dynamically add Custom Spec Tools and Agent Skills by modifying the user-level configuration (with commands like `add-skill` and `add-spec`).
   - **Agent Templates**: The `spec-skills-add` command injects native templates inside `.agent/skills/` and `.agent/workflows/` so an AI coding assistant can execute these additions automatically via chat prompt commands.

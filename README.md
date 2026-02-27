@@ -15,6 +15,19 @@ We currently ship with integrations for some of the most recognized tools for Ag
 - [**ag-kit**](https://github.com/vudovn/ag-kit): Essential agentic templates for structured workflows.
 - [**Antigravity Awesome Skills**](https://github.com/sickn33/antigravity-awesome-skills): A community-curated collection of advanced agent skills.
 
+## Compatibility & Invocation
+
+`sdd-skills-ai` outputs universal `SKILL.md` files and workspace configurations that play nicely with any AI coding assistant supporting local agentic skills or context reading.
+
+| Tool            | Type | Setup Result Location |
+| :-------------- | :--- | :------------------------------------------------ |
+| **Claude Code** | CLI  | `.claude/skills/` (if mapped) or standard config  |
+| **Gemini CLI**  | CLI  | `.gemini/skills/` (if mapped)                     |
+| **Cursor**      | IDE  | Reads `.cursorrules` / `.cursor/skills/`          |
+| **Kiro IDE**    | IDE  | Workspace: `.kiro/skills/`                        |
+| **Antigravity** | IDE  | Workspace: `.agent/skills/` and `.agent/workflows`|
+| **OpenCode**    | CLI  | `.agents/skills/`                                 |
+
 ### Bring Your Own Tools
 `sdd-skills-ai` is fully extensible. You are not limited to the default tools—you can easily **register and add new integrations** to your global configuration directly from other GitHub repositories or local folders using our interactive CLI commands.
 
