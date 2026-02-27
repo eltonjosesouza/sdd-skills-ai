@@ -62,7 +62,7 @@ const promptAgentSelection = async () => {
   return response.agent;
 };
 
-const initAction = async (projectDirectory?: string) => {
+const initAction = async (projectDirectory?: string, agent?: string) => {
   let targetDir = projectDirectory;
 
   if (!targetDir) {
@@ -469,7 +469,11 @@ const specSkillsAddAction = async (
 const wizardAction = async (projectDirectory?: string) => {
   console.log(chalk.blue("\n🧙‍♂️ Welcome to the SDD Skills AI Wizard!\n"));
 
-  let selectedAgent: string | undefined;
+  const selectedAgent = await promptAgentSelection();
+  if (!selectedAgent) {
+    console.log(chalk.red("Operation cancelled."));
+    return false;
+  }
 
   const qInit = await prompts({
     type: "confirm",
@@ -479,7 +483,7 @@ const wizardAction = async (projectDirectory?: string) => {
     initial: true,
   });
   if (qInit.run) {
-    await initAction(projectDirectory);
+    await initAction(projectDirectory, selectedAgent);
   }
 
   const qSkills = await prompts({
@@ -489,10 +493,7 @@ const wizardAction = async (projectDirectory?: string) => {
     initial: true,
   });
   if (qSkills.run) {
-    selectedAgent = await promptAgentSelection();
-    if (selectedAgent) {
-      await applySkillsAction(projectDirectory, selectedAgent);
-    }
+    await applySkillsAction(projectDirectory, selectedAgent);
   }
 
   const qAgentInit = await prompts({
@@ -502,10 +503,7 @@ const wizardAction = async (projectDirectory?: string) => {
     initial: true,
   });
   if (qAgentInit.run) {
-    if (!selectedAgent) selectedAgent = await promptAgentSelection();
-    if (selectedAgent) {
-      await agentInitAction(projectDirectory, selectedAgent);
-    }
+    await agentInitAction(projectDirectory, selectedAgent);
   }
 
   const qSpecSkills = await prompts({
@@ -516,10 +514,7 @@ const wizardAction = async (projectDirectory?: string) => {
     initial: true,
   });
   if (qSpecSkills.run) {
-    if (!selectedAgent) selectedAgent = await promptAgentSelection();
-    if (selectedAgent) {
-      await specSkillsAddAction(projectDirectory, selectedAgent);
-    }
+    await specSkillsAddAction(projectDirectory, selectedAgent);
   }
 
   console.log(chalk.green("\n✨ Wizard complete! Happy coding!\n"));
