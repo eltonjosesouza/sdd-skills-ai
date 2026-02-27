@@ -30,17 +30,7 @@ jobs:
       - name: Run Tests
         run: npm test
 
-      - name: NPM Diagnostics & Cleanup
-        run: |
-          echo "Bypassing inherited .npmrc..."
-          # Delete any runner-injected .npmrc files
-          rm -f ~/.npmrc
-          rm -f $HOME/.npmrc
-          rm -f $RUNNER_TEMP/.npmrc
-          npm config list
-
       - name: Publish to NPM
         run: npm publish --access public --provenance
         env:
-          NODE_AUTH_TOKEN: "" # Clear any inherited token
-          NPM_CONFIG_USERCONFIG: /dev/null # Force ignore runner config
+          NODE_AUTH_TOKEN: "" # Ensure no fake token is override OIDC

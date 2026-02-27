@@ -1,6 +1,6 @@
 {
   "name": "sdd-skills-ai",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "CLI to scaffold a Spec-Driven Organization boilerplate",
   "main": "dist/index.js",
   "bin": {
@@ -20,7 +20,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eltonjosesouza/sdd-skills-ai.git"
+    "url": "https://github.com/eltonjosesouza/sdd-skills-ai"
   },
   "bugs": {
     "url": "https://github.com/eltonjosesouza/sdd-skills-ai/issues"
