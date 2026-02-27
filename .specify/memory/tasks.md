@@ -1,16 +1,11 @@
-# Tasks: Extensible Configuration
+# Tasks: Spec & Skills AI Agent Commands
 
-## Phase 1: Setup
-No specific setup tasks required.
+## Phase 1: Planning
+- [x] T001 Create implementation plan for `spec-skills-add` agent templates.
+- [ ] T002 Await user approval.
 
-## Phase 2: Foundational
-- [ ] T001 Create `Config`, `SkillOption`, `SpecOption`, `CommandObj` types and `loadConfig` function in `src/configManager.ts`
-
-## Phase 3: Adding Extensions [US1]
-- [ ] T002 [US1] Implement `addSkill` and `addSpec` write logic in `src/configManager.ts`
-- [ ] T003 [P] [US1] Add `add-skill` command to the CLI using `prompts` in `src/index.ts`
-- [ ] T004 [P] [US1] Add `add-spec` command to the CLI using `prompts` in `src/index.ts`
-- [ ] T005 [US1] Refactor `init` and `apply-skills` in `src/index.ts` to call `loadConfig()` from `src/configManager.ts` instead of directly importing `src/config.json`
-
-## Phase 4: Polish & Final Checks
-- [ ] T006 Add test/build verification step and rebuild CLI to ensure extension commands function properly
+## Phase 2: Implementation (Core)
+- [ ] T003 Add `ADD_SKILL_SKILL_TEMPLATE` and `ADD_SKILL_WORKFLOW_TEMPLATE` to `src/templates.ts`.
+- [ ] T004 Add `ADD_SPEC_SKILL_TEMPLATE` and `ADD_SPEC_WORKFLOW_TEMPLATE` to `src/templates.ts`.
+- [ ] T005 [P] Create `spec-skills-add` command in `src/index.ts` to copy these 4 templates to the local `.agent` folder.
+- [ ] T006 [P] Build the CLI to verify correctness (`npm run build`).

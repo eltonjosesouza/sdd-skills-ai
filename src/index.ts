@@ -6,7 +6,7 @@ import path from "path";
 import chalk from "chalk";
 import { execSync } from "child_process";
 import { AGENT_INIT_SKILL, AGENT_INIT_WORKFLOW } from "./templates";
-import config from "./config.json";
+import { loadConfig, addSkill, addSpec } from "./configManager";
 
 const packageJson = require("../package.json");
 
@@ -57,6 +57,7 @@ program
     );
 
     try {
+      const config = loadConfig();
       const specPrompt = await prompts({
         type: "multiselect",
         name: "specs",
@@ -130,6 +131,7 @@ program
       ),
     );
 
+    const config = loadConfig();
     const response = await prompts({
       type: "multiselect",
       name: "skills",
@@ -231,6 +233,125 @@ program
       console.error(chalk.red(`\n❌ Failed to setup agent-init skill: ${err}`));
       process.exit(1);
     }
+  });
+
+program
+  .command("add-skill")
+  .description("Add a new AI skill to the global configuration")
+  .action(async () => {
+    const response = await prompts([
+      {
+        type: "text",
+        name: "value",
+        message: "What is the unique ID for this skill? (e.g. my-custom-skill)",
+        validate: (value) => (value.length > 0 ? true : "ID is required"),
+      },
+      {
+        type: "text",
+        name: "title",
+        message: "What is the display title? (e.g. My Custom Skill)",
+        validate: (value) => (value.length > 0 ? true : "Title is required"),
+      },
+      {
+        type: "text",
+        name: "description",
+        message: "Provide a short description:",
+      },
+      {
+        type: "text",
+        name: "cmd",
+        message: "What is the bash command to install/apply this skill?",
+        validate: (value) => (value.length > 0 ? true : "Command is required"),
+      },
+      {
+        type: "confirm",
+        name: "useProjectDir",
+        message: "Should this command run inside the project directory?",
+        initial: true,
+      },
+    ]);
+
+    if (!response.value || !response.title || !response.cmd) {
+      console.log(chalk.red("Operation cancelled. Missing required fields."));
+      process.exit(1);
+    }
+
+    addSkill({
+      value: response.value,
+      title: response.title,
+      description: response.description || "",
+      commands: [
+        {
+          message: `Installing ${response.title}...`,
+          cmd: response.cmd,
+          useProjectDir: response.useProjectDir,
+        },
+      ],
+    });
+
+    console.log(
+      chalk.green(`\n✅ Skill '${response.title}' added to user config!`),
+    );
+  });
+
+program
+  .command("add-spec")
+  .description("Add a new Spec-Driven tool to the global configuration")
+  .action(async () => {
+    const response = await prompts([
+      {
+        type: "text",
+        name: "value",
+        message: "What is the unique ID for this spec tool? (e.g. my-spec)",
+        validate: (value) => (value.length > 0 ? true : "ID is required"),
+      },
+      {
+        type: "text",
+        name: "title",
+        message: "What is the display title? (e.g. My Custom Spec)",
+        validate: (value) => (value.length > 0 ? true : "Title is required"),
+      },
+      {
+        type: "text",
+        name: "description",
+        message: "Provide a short description:",
+      },
+      {
+        type: "text",
+        name: "cmd",
+        message: "What is the bash command to initialize this tool?",
+        validate: (value) => (value.length > 0 ? true : "Command is required"),
+      },
+      {
+        type: "confirm",
+        name: "useProjectDir",
+        message: "Should this command run inside the project directory?",
+        initial: true,
+      },
+    ]);
+
+    if (!response.value || !response.title || !response.cmd) {
+      console.log(chalk.red("Operation cancelled. Missing required fields."));
+      process.exit(1);
+    }
+
+    addSpec({
+      value: response.value,
+      title: response.title,
+      description: response.description || "",
+      selected: true,
+      commands: [
+        {
+          message: `Running initialization for ${response.title}...`,
+          cmd: response.cmd,
+          useProjectDir: response.useProjectDir,
+        },
+      ],
+    });
+
+    console.log(
+      chalk.green(`\n✅ Spec tool '${response.title}' added to user config!`),
+    );
   });
 
 program.parse(process.argv);
