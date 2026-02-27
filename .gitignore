@@ -12,6 +12,7 @@ dist/
 # AI configs
 .agent/
 .gemini/
+.specify/
 openspec/
 spec.md
 

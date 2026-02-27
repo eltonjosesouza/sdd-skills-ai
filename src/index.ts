@@ -170,4 +170,72 @@ program
     console.log(chalk.green("\n✅ Skills injection complete!"));
   });
 
+program
+  .command("agent-init")
+  .description(
+    "Initialize an AGENTS.md file in the project root to provide context for AI coding agents",
+  )
+  .argument(
+    "[project-directory]",
+    "Directory to create the AGENTS.md file in (defaults to current directory)",
+  )
+  .action(async (projectDirectory) => {
+    const targetDir = projectDirectory || ".";
+    const currentDir = process.cwd();
+    const projectPath = path.resolve(currentDir, targetDir);
+
+    console.log(
+      chalk.blue(`\n🚀 Initializing AGENTS.md in ${projectPath}...\n`),
+    );
+
+    // Ensure the target directory exists (though it usually should if running from it)
+    await fs.ensureDir(projectPath);
+
+    const agentsMdPath = path.join(projectPath, "AGENTS.md");
+
+    if (fs.existsSync(agentsMdPath)) {
+      console.log(
+        chalk.yellow(
+          `\n⚠️ AGENTS.md already exists at ${agentsMdPath}. Skipping creation.`,
+        ),
+      );
+      process.exit(0);
+    }
+
+    const templateContent = `# AGENTS.md
+
+A dedicated place to provide context and instructions to help AI coding agents work on this project.
+Learn more at: https://agents.md/
+
+## Setup commands
+- Install deps: \`npm install\` (or your package manager)
+- Start dev server: \`npm run dev\`
+- Run tests: \`npm run test\`
+
+## Code style
+- [Add your project's code style rules here]
+- [Example: Use functional patterns where possible]
+- [Example: Strict TypeScript]
+
+## Architecture & Context
+- [Add information about your tech stack]
+- [Add any important architectural decisions here]
+`;
+
+    try {
+      await fs.writeFile(agentsMdPath, templateContent, "utf-8");
+      console.log(
+        chalk.green(`\n✅ Successfully created AGENTS.md at ${agentsMdPath}`),
+      );
+      console.log(
+        chalk.white(
+          `📝 Please edit this file to add your project-specific agent instructions.`,
+        ),
+      );
+    } catch (err) {
+      console.error(chalk.red(`\n❌ Failed to create AGENTS.md: ${err}`));
+      process.exit(1);
+    }
+  });
+
 program.parse(process.argv);
