@@ -1,15 +1,14 @@
 {
   "name": "sdd-skills-ai",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "CLI to scaffold a Spec-Driven Organization boilerplate",
   "main": "dist/index.js",
   "bin": {
     "sdd-skills-ai": "dist/index.js"
   },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs --clean",
-    "postbuild": "cp -r src/_templates dist/_templates",
-    "dev": "tsup src/index.ts --format cjs --watch",
+    "build": "tsup src/index.ts --format cjs --clean --loader '.md=text'",
+    "dev": "tsup src/index.ts --format cjs --watch --loader '.md=text'",
     "test": "jest --passWithNoTests",
     "prepublishOnly": "npm run build"
   },
