@@ -13,6 +13,9 @@ import {
   ADD_SKILL_WORKFLOW_TEMPLATE,
   ADD_SPEC_SKILL_TEMPLATE,
   ADD_SPEC_WORKFLOW_TEMPLATE,
+  AGENTS_MD_SPECIALIST_SKILL,
+  CLAUDE_MD_SPECIALIST_SKILL,
+  AGENTS_CLAUDE_SYNC_WORKFLOW,
 } from "./templates";
 import { loadConfig, addSkill, addSpec } from "./configManager";
 
@@ -318,7 +321,21 @@ const agentInitAction = async (projectDirectory?: string, agent?: string) => {
   );
   const workflowsDir = path.join(projectPath, agentDirName, "workflows");
 
+  const agentsMdSpecialistDir = path.join(
+    projectPath,
+    agentDirName,
+    "skills",
+    "sdd-skills-ai.agents-md-specialist",
+  );
+  const claudeMdSpecialistDir = path.join(
+    projectPath,
+    agentDirName,
+    "skills",
+    "sdd-skills-ai.claude-md-specialist",
+  );
+
   try {
+    // agents-init skill
     await fs.ensureDir(skillDir);
     await fs.writeFile(
       path.join(skillDir, "SKILL.md"),
@@ -326,10 +343,32 @@ const agentInitAction = async (projectDirectory?: string, agent?: string) => {
       "utf-8",
     );
 
+    // agents-md-specialist skill
+    await fs.ensureDir(agentsMdSpecialistDir);
+    await fs.writeFile(
+      path.join(agentsMdSpecialistDir, "SKILL.md"),
+      AGENTS_MD_SPECIALIST_SKILL,
+      "utf-8",
+    );
+
+    // claude-md-specialist skill
+    await fs.ensureDir(claudeMdSpecialistDir);
+    await fs.writeFile(
+      path.join(claudeMdSpecialistDir, "SKILL.md"),
+      CLAUDE_MD_SPECIALIST_SKILL,
+      "utf-8",
+    );
+
+    // workflows
     await fs.ensureDir(workflowsDir);
     await fs.writeFile(
       path.join(workflowsDir, "sdd-skills-ai.agents-init.md"),
       AGENT_INIT_WORKFLOW,
+      "utf-8",
+    );
+    await fs.writeFile(
+      path.join(workflowsDir, "sdd-skills-ai.agents-claude-sync.md"),
+      AGENTS_CLAUDE_SYNC_WORKFLOW,
       "utf-8",
     );
 
@@ -338,12 +377,32 @@ const agentInitAction = async (projectDirectory?: string, agent?: string) => {
     );
     console.log(
       chalk.green(
+        `✅ Successfully created skill at ${agentsMdSpecialistDir}/SKILL.md`,
+      ),
+    );
+    console.log(
+      chalk.green(
+        `✅ Successfully created skill at ${claudeMdSpecialistDir}/SKILL.md`,
+      ),
+    );
+    console.log(
+      chalk.green(
         `✅ Successfully created workflow at ${workflowsDir}/sdd-skills-ai.agents-init.md`,
       ),
     );
     console.log(
+      chalk.green(
+        `✅ Successfully created workflow at ${workflowsDir}/sdd-skills-ai.agents-claude-sync.md`,
+      ),
+    );
+    console.log(
       chalk.white(
-        `\n📝 To use this skill, type \`/sdd-skills-ai.agents-init\` in your chat to generate/update the AGENTS.md based on your project structure.`,
+        `\n📝 To use these skills, type \`/sdd-skills-ai.agents-init\` to generate AGENTS.md,`,
+      ),
+    );
+    console.log(
+      chalk.white(
+        `   or \`/sdd-skills-ai.agents-claude-sync\` to sync AGENTS.md and CLAUDE.md.`,
       ),
     );
     return true;
