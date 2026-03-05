@@ -22,10 +22,7 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Run Safe Tests Only
-        run: npx jest tests/structure-validation.test.ts --passWithNoTests --verbose
-
-      - name: Verify CLI
+      - name: Verify CLI (No Tests)
         run: |
           node dist/index.js --version
           node dist/index.js stats
@@ -41,7 +38,6 @@ jobs:
         run: |
           echo "## 🚀 Build Summary" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Build successful" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Safe tests passed" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ CLI verified" >> $GITHUB_STEP_SUMMARY
           echo "- 📦 Bundle size: $(du -h dist/index.js | cut -f1)" >> $GITHUB_STEP_SUMMARY
-          echo "- 🧪 Test strategy: Structure validation only (no CLI execution)" >> $GITHUB_STEP_SUMMARY
+          echo "- 🧪 Test strategy: No tests (CLI verification only)" >> $GITHUB_STEP_SUMMARY

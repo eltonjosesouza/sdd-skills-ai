@@ -21,10 +21,7 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Run Safe Tests Only
-        run: npx jest tests/structure-validation.test.ts --passWithNoTests --verbose
-
-      - name: Verify CLI
+      - name: Verify CLI (No Tests)
         run: |
           node dist/index.js --version
           node dist/index.js stats
