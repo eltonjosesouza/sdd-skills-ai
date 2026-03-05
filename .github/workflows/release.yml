@@ -1,0 +1,46 @@
+name: Release Build
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Run Tests
+        run: npm test
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 30
+
+      - name: Verify CLI
+        run: |
+          node dist/index.js --version
+          node dist/index.js stats
+
+      - name: Create Release Summary
+        run: |
+          echo "## 🚀 Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Build successful" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Tests passed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ CLI verified" >> $GITHUB_STEP_SUMMARY
+          echo "- 📦 Bundle size: $(du -h dist/index.js | cut -f1)" >> $GITHUB_STEP_SUMMARY
