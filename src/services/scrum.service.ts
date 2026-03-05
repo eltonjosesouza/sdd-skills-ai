@@ -163,21 +163,21 @@ export class ScrumService {
       workflow: SCRUM_SETUP_AGENT_CONFIGS_WORKFLOW,
       id: "scrum.setup-agent-configs",
     },
-    { name: "Bug Fix", workflow: SCRUM_BUG_FIX_WORKFLOW, id: "bug-fix" },
+    { name: "Bug Fix", workflow: SCRUM_BUG_FIX_WORKFLOW, id: "scrum.bug-fix" },
     {
       name: "Create Feature",
       workflow: SCRUM_CREATE_FEATURE_WORKFLOW,
-      id: "create-feature",
+      id: "scrum.create-feature",
     },
     {
       name: "Project Init",
       workflow: SCRUM_PROJECT_INIT_WORKFLOW,
-      id: "project-init",
+      id: "scrum.project-init",
     },
     {
       name: "Report Bug",
       workflow: SCRUM_REPORT_BUG_WORKFLOW,
-      id: "report-bug",
+      id: "scrum.report-bug",
     },
   ];
 
