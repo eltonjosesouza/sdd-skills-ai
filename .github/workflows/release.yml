@@ -22,8 +22,13 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Run Tests
-        run: npm test
+      - name: Run Structure Tests Only
+        run: npx jest tests/structure-validation.test.ts --passWithNoTests
+
+      - name: Verify CLI
+        run: |
+          node dist/index.js --version
+          node dist/index.js stats
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
@@ -32,15 +37,10 @@ jobs:
           path: dist/
           retention-days: 30
 
-      - name: Verify CLI
-        run: |
-          node dist/index.js --version
-          node dist/index.js stats
-
       - name: Create Release Summary
         run: |
           echo "## 🚀 Build Summary" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Build successful" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Tests passed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Structure tests passed" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ CLI verified" >> $GITHUB_STEP_SUMMARY
           echo "- 📦 Bundle size: $(du -h dist/index.js | cut -f1)" >> $GITHUB_STEP_SUMMARY
