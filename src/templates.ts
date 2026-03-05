@@ -35,6 +35,10 @@ import SCRUM_FEATURE_LIFECYCLE_WORKFLOW from "./_templates/scrum-feature-lifecyc
 import SCRUM_SPRINT_PLANNING_WORKFLOW from "./_templates/scrum-sprint-planning.workflow.md";
 import SCRUM_INSTALL_SCRUM_AGENTS_WORKFLOW from "./_templates/scrum-install-scrum-agents.workflow.md";
 import SCRUM_SETUP_AGENT_CONFIGS_WORKFLOW from "./_templates/scrum-setup-agent-configs.workflow.md";
+import SCRUM_BUG_FIX_WORKFLOW from "./_templates/scrum-bug-fix.workflow.md";
+import SCRUM_CREATE_FEATURE_WORKFLOW from "./_templates/scrum-create-feature.workflow.md";
+import SCRUM_PROJECT_INIT_WORKFLOW from "./_templates/scrum-project-init.workflow.md";
+import SCRUM_REPORT_BUG_WORKFLOW from "./_templates/scrum-report-bug.workflow.md";
 
 export {
   AGENT_INIT_SKILL,
@@ -73,4 +77,8 @@ export {
   SCRUM_SPRINT_PLANNING_WORKFLOW,
   SCRUM_INSTALL_SCRUM_AGENTS_WORKFLOW,
   SCRUM_SETUP_AGENT_CONFIGS_WORKFLOW,
+  SCRUM_BUG_FIX_WORKFLOW,
+  SCRUM_CREATE_FEATURE_WORKFLOW,
+  SCRUM_PROJECT_INIT_WORKFLOW,
+  SCRUM_REPORT_BUG_WORKFLOW,
 };
