@@ -1,10 +1,23 @@
 {
   "specs": [
     {
-      "value": "openspec",
-      "title": "OpenSpec (@fission-ai/openspec)",
-      "description": "Creates an AI-friendly spec.md setup",
+      "value": "speckit",
+      "title": "Spec-Kit (github/spec-kit) - RECOMMENDED",
+      "description": "Advanced Git, Agent, and Workflow specs (Default choice)",
       "selected": true,
+      "commands": [
+        {
+          "message": "Running spec-kit initialization...",
+          "cmd": "uvx --from git+https://github.com/github/spec-kit.git specify init .",
+          "useProjectDir": true
+        }
+      ]
+    },
+    {
+      "value": "openspec",
+      "title": "OpenSpec (@fission-ai/openspec) - Optional",
+      "description": "Creates an AI-friendly spec.md setup (Can be used alongside Spec-Kit)",
+      "selected": false,
       "commands": [
         {
           "message": "Installing @fission-ai/openspec globally...",
@@ -17,19 +30,272 @@
           "useProjectDir": true
         }
       ]
+    }
+  ],
+  "tools": [
+    {
+      "value": "claude",
+      "title": "Claude Code",
+      "description": "Anthropic's Claude Code CLI assistant",
+      "selected": false,
+      "paths": {
+        "skills": ".claude/skills/",
+        "workflows": ".claude/commands/",
+        "config": ".claude/"
+      }
     },
     {
-      "value": "speckit",
-      "title": "Spec-Kit (github/spec-kit)",
-      "description": "Advanced Git, Agent, and Workflow specs",
-      "selected": true,
-      "commands": [
-        {
-          "message": "Running spec-kit initialization...",
-          "cmd": "uvx --from git+https://github.com/github/spec-kit.git specify init .",
-          "useProjectDir": true
-        }
-      ]
+      "value": "cursor",
+      "title": "Cursor",
+      "description": "AI-powered IDE with advanced code completion",
+      "selected": false,
+      "paths": {
+        "skills": ".cursor/skills/",
+        "workflows": ".cursor/commands/",
+        "config": ".cursor/"
+      }
+    },
+    {
+      "value": "windsurf",
+      "title": "Windsurf",
+      "description": "AI coding assistant with context-aware capabilities",
+      "selected": false,
+      "paths": {
+        "skills": ".windsurf/skills/",
+        "workflows": ".windsurf/workflows/",
+        "config": ".windsurf/"
+      }
+    },
+    {
+      "value": "gemini",
+      "title": "Gemini CLI",
+      "description": "Google's Gemini AI coding assistant",
+      "selected": false,
+      "paths": {
+        "skills": ".gemini/skills/",
+        "workflows": ".gemini/commands/",
+        "config": ".gemini/"
+      }
+    },
+    {
+      "value": "antigravity",
+      "title": "Antigravity",
+      "description": "Advanced agentic development environment",
+      "selected": false,
+      "paths": {
+        "skills": ".agent/skills/",
+        "workflows": ".agent/workflows/",
+        "config": ".agent/"
+      }
+    },
+    {
+      "value": "cline",
+      "title": "Cline",
+      "description": "AI assistant for VS Code and other editors",
+      "selected": false,
+      "paths": {
+        "skills": ".cline/skills/",
+        "workflows": ".clinerules/workflows/",
+        "config": ".cline/"
+      }
+    },
+    {
+      "value": "codex",
+      "title": "Codex",
+      "description": "OpenAI's Codex programming assistant",
+      "selected": false,
+      "paths": {
+        "skills": ".codex/skills/",
+        "workflows": "$CODEX_HOME/prompts/",
+        "config": ".codex/"
+      }
+    },
+    {
+      "value": "continue",
+      "title": "Continue",
+      "description": "AI coding assistant with multi-file context",
+      "selected": false,
+      "paths": {
+        "skills": ".continue/skills/",
+        "workflows": ".continue/prompts/",
+        "config": ".continue/"
+      }
+    },
+    {
+      "value": "github-copilot",
+      "title": "GitHub Copilot",
+      "description": "Microsoft's AI pair programming assistant",
+      "selected": false,
+      "paths": {
+        "skills": ".github/skills/",
+        "workflows": ".github/prompts/",
+        "config": ".github/"
+      }
+    },
+    {
+      "value": "kiro",
+      "title": "Kiro",
+      "description": "AI-powered development environment",
+      "selected": false,
+      "paths": {
+        "skills": ".kiro/skills/",
+        "workflows": ".kiro/prompts/",
+        "config": ".kiro/"
+      }
+    },
+    {
+      "value": "opencode",
+      "title": "OpenCode",
+      "description": "Open-source AI coding assistant",
+      "selected": false,
+      "paths": {
+        "skills": ".opencode/skills/",
+        "workflows": ".opencode/commands/",
+        "config": ".opencode/"
+      }
+    },
+    {
+      "value": "amazon-q",
+      "title": "Amazon Q Developer",
+      "description": "Amazon's AI-powered development assistant",
+      "selected": false,
+      "paths": {
+        "skills": ".amazonq/skills/",
+        "workflows": ".amazonq/prompts/",
+        "config": ".amazonq/"
+      }
+    },
+    {
+      "value": "auggie",
+      "title": "Auggie",
+      "description": "AI development assistant with augmented capabilities",
+      "selected": false,
+      "paths": {
+        "skills": ".augment/skills/",
+        "workflows": ".augment/commands/",
+        "config": ".augment/"
+      }
+    },
+    {
+      "value": "codebuddy",
+      "title": "CodeBuddy",
+      "description": "AI coding companion for development tasks",
+      "selected": false,
+      "paths": {
+        "skills": ".codebuddy/skills/",
+        "workflows": ".codebuddy/commands/",
+        "config": ".codebuddy/"
+      }
+    },
+    {
+      "value": "costrict",
+      "title": "CoStrict",
+      "description": "Strict coding assistant with type safety",
+      "selected": false,
+      "paths": {
+        "skills": ".cospec/skills/",
+        "workflows": ".cospec/openspec/commands/",
+        "config": ".cospec/"
+      }
+    },
+    {
+      "value": "crush",
+      "title": "Crush",
+      "description": "AI assistant for code optimization",
+      "selected": false,
+      "paths": {
+        "skills": ".crush/skills/",
+        "workflows": ".crush/commands/",
+        "config": ".crush/"
+      }
+    },
+    {
+      "value": "factory",
+      "title": "Factory Droid",
+      "description": "Android development AI assistant",
+      "selected": false,
+      "paths": {
+        "skills": ".factory/skills/",
+        "workflows": ".factory/commands/",
+        "config": ".factory/"
+      }
+    },
+    {
+      "value": "iflow",
+      "title": "iFlow",
+      "description": "Intelligent workflow automation assistant",
+      "selected": false,
+      "paths": {
+        "skills": ".iflow/skills/",
+        "workflows": ".iflow/commands/",
+        "config": ".iflow/"
+      }
+    },
+    {
+      "value": "kilocode",
+      "title": "Kilo Code",
+      "description": "AI assistant for large codebases",
+      "selected": false,
+      "paths": {
+        "skills": ".kilocode/skills/",
+        "workflows": ".kilocode/workflows/",
+        "config": ".kilocode/"
+      }
+    },
+    {
+      "value": "pi",
+      "title": "Pi",
+      "description": "Mathematical AI coding assistant",
+      "selected": false,
+      "paths": {
+        "skills": ".pi/skills/",
+        "workflows": ".pi/prompts/",
+        "config": ".pi/"
+      }
+    },
+    {
+      "value": "qoder",
+      "title": "Qoder",
+      "description": "AI assistant for quantum computing",
+      "selected": false,
+      "paths": {
+        "skills": ".qoder/skills/",
+        "workflows": ".qoder/commands/",
+        "config": ".qoder/"
+      }
+    },
+    {
+      "value": "qwen",
+      "title": "Qwen Code",
+      "description": "Alibaba's Qwen AI coding assistant",
+      "selected": false,
+      "paths": {
+        "skills": ".qwen/skills/",
+        "workflows": ".qwen/commands/",
+        "config": ".qwen/"
+      }
+    },
+    {
+      "value": "roocode",
+      "title": "RooCode",
+      "description": "AI assistant with Roo architecture",
+      "selected": false,
+      "paths": {
+        "skills": ".roo/skills/",
+        "workflows": ".roo/commands/",
+        "config": ".roo/"
+      }
+    },
+    {
+      "value": "trae",
+      "title": "Trae",
+      "description": "AI assistant with trace capabilities",
+      "selected": false,
+      "paths": {
+        "skills": ".trae/skills/",
+        "workflows": "",
+        "config": ".trae/"
+      }
     }
   ],
   "skills": [

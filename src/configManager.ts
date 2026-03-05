@@ -24,8 +24,21 @@ export interface SkillOption {
   commands: CommandObj[];
 }
 
+export interface ToolOption {
+  value: string;
+  title: string;
+  description: string;
+  selected?: boolean;
+  paths: {
+    skills: string;
+    workflows: string;
+    config: string;
+  };
+}
+
 export interface Config {
   specs: SpecOption[];
+  tools: ToolOption[];
   skills: SkillOption[];
 }
 
@@ -35,6 +48,7 @@ const CONFIG_FILE = path.join(CONFIG_DIR, 'config.json');
 export function loadConfig(): Config {
   let mergedConfig: Config = {
     specs: [...defaultConfig.specs],
+    tools: [...defaultConfig.tools],
     skills: [...defaultConfig.skills],
   };
 
@@ -50,6 +64,18 @@ export function loadConfig(): Config {
             mergedConfig.specs[index] = userSpec;
           } else {
             mergedConfig.specs.push(userSpec);
+          }
+        });
+      }
+
+      if (userConfigObject.tools && Array.isArray(userConfigObject.tools)) {
+        // Merge tools, overwriting or pushing
+        userConfigObject.tools.forEach((userTool: ToolOption) => {
+          const index = mergedConfig.tools.findIndex(t => t.value === userTool.value);
+          if (index >= 0) {
+            mergedConfig.tools[index] = userTool;
+          } else {
+            mergedConfig.tools.push(userTool);
           }
         });
       }
@@ -75,7 +101,7 @@ export function loadConfig(): Config {
 export function saveUserConfig(configPatch: Partial<Config>) {
   fs.ensureDirSync(CONFIG_DIR);
 
-  let existingUserConfig: Config = { specs: [], skills: [] };
+  let existingUserConfig: Config = { specs: [], tools: [], skills: [] };
   if (fs.existsSync(CONFIG_FILE)) {
     try {
       existingUserConfig = { ...existingUserConfig, ...fs.readJsonSync(CONFIG_FILE) };
@@ -91,6 +117,17 @@ export function saveUserConfig(configPatch: Partial<Config>) {
         existingUserConfig.specs[index] = newSpec;
       } else {
         existingUserConfig.specs.push(newSpec);
+      }
+    });
+  }
+
+  if (configPatch.tools) {
+    configPatch.tools.forEach(newTool => {
+      const index = existingUserConfig.tools.findIndex(t => t.value === newTool.value);
+      if (index >= 0) {
+        existingUserConfig.tools[index] = newTool;
+      } else {
+        existingUserConfig.tools.push(newTool);
       }
     });
   }
@@ -111,6 +148,10 @@ export function saveUserConfig(configPatch: Partial<Config>) {
 
 export function addSpec(spec: SpecOption) {
   saveUserConfig({ specs: [spec] });
+}
+
+export function addTool(tool: ToolOption) {
+  saveUserConfig({ tools: [tool] });
 }
 
 export function addSkill(skill: SkillOption) {
