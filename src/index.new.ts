@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command } from "commander";
-import { WizardCommand } from "./commands/wizard.command";
-import { InitCommand } from "./commands/init.command";
+import { WizardCommand } from "./presentation/commands/wizard.command";
+import { InitCommand } from "./presentation/commands/init.command";
 import { AutocompletionService } from "./services/autocompletion.service";
 import { ToolConfigurationService } from "./services/tool-configuration.service";
 import { ScrumService } from "./services/scrum.service";
@@ -122,7 +122,7 @@ program
   .action(() => {
     const toolStats = ToolConfigurationService.getSupportedToolsCount();
     const scrumStats = ScrumService.getScrumStats();
-    
+
     console.log("\n📊 SDD Skills AI Statistics:");
     console.log(`🔧 Supported AI Tools: ${toolStats}`);
     console.log(`🏈 Scrum Components:`);

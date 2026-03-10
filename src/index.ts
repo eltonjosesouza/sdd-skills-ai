@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 import { Command } from "commander";
-import { WizardCommand } from "./commands/wizard.command";
-import { InitCommand } from "./commands/init.command";
+import { WizardCommand } from "./presentation/commands/wizard.command";
+import { InitCommand } from "./presentation/commands/init.command";
+import { AgentInitCommand } from "./presentation/commands/agent-init.command";
 import { AutocompletionService } from "./services/autocompletion.service";
 import { ToolConfigurationService } from "./services/tool-configuration.service";
 import { ScrumService } from "./services/scrum.service";
-import { applySkillsAction, agentInitAction, setupScrumAgentConfigsAction } from "./actions";
+import { applySkillsAction, agentInitAction, setupScrumAgentConfigsAction, specSkillsAddAction } from "./actions";
 
 const packageJson = require("../package.json");
 
@@ -19,6 +20,7 @@ program
 // Register all commands
 WizardCommand.register(program);
 InitCommand.register(program);
+AgentInitCommand.register(program);
 
 // Configure tools command
 program
@@ -39,17 +41,6 @@ program
   .option("-a, --agent <agent>", "Target AI Assistant (antigravity, claude, gemini, cursor, etc.)")
   .action(async (dir, options) => {
     const success = await applySkillsAction(dir, options.agent);
-    if (!success) process.exit(1);
-  });
-
-// Agent init command
-program
-  .command("agent-init")
-  .description("Initialize an AGENTS.md file in the project root to provide context for AI coding agents")
-  .argument("[project-directory]", "Directory to create the AGENTS.md file in (defaults to current directory)")
-  .option("-a, --agent <agent>", "Target AI Assistant")
-  .action(async (dir, options) => {
-    const success = await agentInitAction(dir, options.agent);
     if (!success) process.exit(1);
   });
 
@@ -102,8 +93,8 @@ program
   .argument("[project-directory]", "Directory to enable in (defaults to current directory)")
   .option("-a, --agent <agent>", "Target AI Assistant")
   .action(async (dir, options) => {
-    console.log("Spec skills add functionality - TODO: Implement");
-    // TODO: Implement specSkillsAdd logic
+    const success = await specSkillsAddAction(dir, options.agent);
+    if (!success) process.exit(1);
   });
 
 // Completion command
@@ -122,7 +113,7 @@ program
   .action(() => {
     const toolStats = ToolConfigurationService.getSupportedToolsCount();
     const scrumStats = ScrumService.getScrumStats();
-    
+
     console.log("\n📊 SDD Skills AI Statistics:");
     console.log(`🔧 Supported AI Tools: ${toolStats}`);
     console.log(`🏈 Scrum Components:`);

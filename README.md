@@ -15,7 +15,7 @@
 </p>
 
 <details>
-<summary><strong>The universal agentic IDE boilerplate.</strong></summary>
+<summary><strong>The universal agentic IDE boilerplate with Clean Architecture.</strong></summary>
 
 [![Stars](https://img.shields.io/github/stars/eltonjosesouza/sdd-skills-ai?style=flat-square&label=Stars)](https://github.com/eltonjosesouza/sdd-skills-ai/stargazers)
 [![Downloads](https://img.shields.io/npm/dm/sdd-skills-ai?style=flat-square&label=Downloads/mo)](https://www.npmjs.com/package/sdd-skills-ai)
@@ -31,12 +31,14 @@ Our philosophy:
 → Scrum-first not ad-hoc
 → built for teams not just individuals
 → scalable from solo to enterprise
+→ Clean Architecture not technical debt
 ```
 
 > [!TIP]
 > **Complete Scrum methodology now built-in!** We've integrated full SDD+TDD+DDD Scrum with 9 specialized AI agents.
+> **New Clean Architecture!** Refactored with SOLID principles for maximum maintainability.
 >
-> Run `npx sdd-skills-ai wizard` to get started. → [Learn more here](docs/scrum/overview.md)
+> Run `sdd-skills-ai wizard` to get started. → [Learn more here](docs/scrum/overview.md)
 
 <p align="center">
   Follow <a href="https://github.com/eltonjosesouza">eltonjosesouza on GitHub</a> for updates · Join the <a href="https://github.com/eltonjosesouza/sdd-skills-ai/discussions">GitHub Discussions</a> for help and questions.
@@ -45,11 +47,12 @@ Our philosophy:
 ## See it in action
 
 ```text
-You: npx sdd-skills-ai wizard
+You: sdd-skills-ai wizard
 AI:  🧙‍♂️ Welcome to the SDD Skills AI Wizard!
+     ✓ Clean Architecture initialized
      ✓ Spec-Kit initialized (default)
      ✓ 23 AI tools configured
-     ✓ Community skills added
+     ✓ 47 community skills added
      ✓ Complete Scrum methodology installed
      ✓ 9 specialized agents ready
      Your AI-driven development environment is ready!
@@ -105,11 +108,64 @@ Now tell your AI: `@scrum.product-owner <what-you-want-to-build>`
 >
 > Also works with pnpm, yarn, and bun. [See installation options](docs/installation.md).
 
+## 🏗️ Architecture
+
+**v2.0 introduces Clean Architecture with SOLID principles:**
+
+```
+src/
+├── application/           # Application Layer (Use Cases)
+│   ├── services/         # Application services
+│   └── use-cases/        # Specific use case implementations
+├── domain/               # Domain Layer (Business Logic)
+│   ├── entities/         # Domain entities
+│   ├── repositories/    # Repository interfaces
+│   └── services/         # Domain services
+├── infrastructure/       # Infrastructure Layer
+│   ├── filesystem/      # File system operations
+│   ├── process/         # Process execution
+│   └── ui/              # CLI interactions
+├── presentation/         # Presentation Layer (CLI)
+│   └── commands/        # CLI command handlers
+└── shared/              # Shared utilities
+```
+
+### Key Benefits
+
+- **Single Responsibility**: Each class has one clear purpose
+- **Dependency Inversion**: Services depend on interfaces, not concretions
+- **Testability**: Easy to mock and test individual components
+- **Maintainability**: Clear separation makes code easier to modify
+- **Extensibility**: New features can be added without breaking existing code
+
+## 🚀 Commands
+
+### Interactive Setup
+- **`wizard`** - Complete interactive setup (recommended)
+- **`init`** - Initialize Spec-Driven base configuration
+
+### Configuration
+- **`agent-init`** - Create AGENTS.md with AI context
+- **`configure-tools`** - Configure AI coding assistant tools
+- **`setup-scrum-configs`** - Configure Scrum agents
+
+### Skills & Tools
+- **`apply-skills`** - Inject Antigravity skill packs
+- **`install-scrum`** - Install complete Scrum methodology
+- **`spec-skills-add`** - Enable autonomous tool addition
+
+### Utilities
+- **`add-skill`** - Register custom skill repository
+- **`add-spec`** - Register local spec-driven tool
+- **`completion`** - Setup shell autocompletion
+- **`stats`** - Show available components statistics
+
 ## Docs
 
 → **[Getting Started](docs/getting-started.md)**: first steps<br>
 → **[Quick Start](docs/quick-start.md)**: 5-minute tutorial<br>
 → **[CLI Reference](docs/cli.md)**: complete command reference<br>
+→ **[Architecture Guide](docs/architecture/overview.md)**: Clean Architecture details<br>
 → **[Scrum Overview](docs/scrum/overview.md)**: complete methodology<br>
 → **[Supported Tools](docs/supported-tools.md)**: 23 AI assistants<br>
 → **[Installation](docs/installation.md)**: detailed setup guide<br>
@@ -121,6 +177,7 @@ Now tell your AI: `@scrum.product-owner <what-you-want-to-build>`
 AI coding assistants are powerful but lack structure and methodology. SDD Skills AI adds a complete development layer so you can build with discipline, quality, and team collaboration.
 
 - **Build with discipline** — SDD+TDD+DDD methodology ensures quality before code gets written
+- **Clean Architecture** — SOLID principles for maintainable, scalable code
 - **Collaborate effectively** — 9 specialized Scrum agents with clear roles and responsibilities
 - **Stay organized** — complete 6-phase development from discovery to release
 - **Use your tools** — works with 23+ AI assistants via agent configurations

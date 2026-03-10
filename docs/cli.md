@@ -1,280 +1,221 @@
 # CLI Reference
 
-The SDD Skills AI CLI (`sdd-skills-ai`) provides terminal commands for project setup, configuration, and management. These commands complement the AI slash commands and workflows documented in [Commands](commands.md).
+Complete command reference for SDD Skills AI v2.0 with Clean Architecture.
+
+## 🚀 Installation
+
+```bash
+npm install -g sdd-skills-ai
+```
+
+## 📋 Commands Overview
+
+| Category | Commands | Purpose |
+|----------|----------|---------|
+| **Interactive Setup** | `wizard`, `init` | Complete project initialization |
+| **Configuration** | `agent-init`, `configure-tools`, `setup-scrum-configs` | AI assistant setup |
+| **Skills & Tools** | `apply-skills`, `install-scrum`, `spec-skills-add` | Feature enhancement |
+| **Utilities** | `add-skill`, `add-spec`, `completion`, `stats` | Management tools |
 
 ---
 
-## 📋 Command Summary
-
-### 🧙‍♂️ Setup Commands
-- [`wizard`](#wizard) - Interactive setup wizard (recommended)
-- [`init`](#init) - Initialize spec-driven architecture
-- [`agent-init`](#agent-init) - Create AGENTS.md configuration
-
-### 🔧 Configuration Commands
-- [`configure-tools`](#configure-tools) - Configure AI coding assistants
-- [`apply-skills`](#apply-skills) - Inject skill packs
-- [`spec-skills-add`](#spec-skills-add) - Enable autonomous tool addition
-
-### 🏈 Scrum Commands
-- [`install-scrum`](#install-scrum) - Install complete Scrum methodology
-- [`setup-scrum-configs`](#setup-scrum-configs) - Configure Scrum agents
-
-### 🔌 Extension Commands
-- [`add-skill`](#add-skill) - Register custom skill repository
-- [`add-spec`](#add-spec) - Register local spec-driven tool
-
-### 🔧 Utility Commands
-- [`completion`](#completion) - Setup shell autocompletion
-
----
-
-## 🧙‍♂️ Setup Commands
+## 🧙‍♂️ Interactive Setup
 
 ### `wizard`
-**Interactive setup wizard with guided configuration**
+**Complete interactive setup (recommended)**
 
 ```bash
 sdd-skills-ai wizard [project-directory]
 ```
 
-**Description**: The complete interactive experience that guides you through all setup phases. This is the recommended way to get started.
+**What it does:**
+- Guides you through complete project setup
+- Initializes Spec-Driven base configuration
+- Configures AI coding assistant tools
+- Injects AI skills and workflows
+- Installs complete Scrum methodology
+- Sets up shell autocompletion
 
-**Options**:
-- `project-directory` (optional) - Directory to set up (defaults to current)
-
-**Wizard Flow**:
-1. **Specs** - Choose Spec-Kit (default) or OpenSpec
-2. **Tools** - Select AI coding assistants (23 options available)
-3. **Skills** - Add community skills and templates
-4. **Agents** - Create AGENTS.md and Claude.md
-5. **Scrum** - Optional complete Scrum methodology
-6. **Autonomous** - Enable AI to add its own tools
-
-**Example**:
+**Example:**
 ```bash
-# Start wizard in current directory
-sdd-skills-ai wizard
-
-# Start wizard in new project
-sdd-skills-ai wizard my-new-project
+sdd-skills-ai wizard my-project
 ```
-
----
 
 ### `init`
-**Initialize spec-driven architecture base**
+**Initialize Spec-Driven base configuration**
 
 ```bash
-sdd-skills-ai init [project-directory]
+sdd-skills-ai init [options] [project-directory]
 ```
 
-**Description**: Sets up the base SDD architecture with spec-driven development tools.
+**Options:**
+- `-a, --agent <agent>`: Target AI Assistant
 
-**Options**:
-- `project-directory` (optional) - Directory to initialize
+**What it does:**
+- Sets up Spec-Kit and/or OpenSpec
+- Creates base project structure
+- Configures spec-driven development
 
-**What it creates**:
-- Spec-driven configuration files
-- Documentation structure
-- Base templates and workflows
-
-**Example**:
+**Example:**
 ```bash
-# Initialize current directory
-sdd-skills-ai init
-
-# Initialize new project
-sdd-skills-ai init my-project
+sdd-skills-ai init . --agent antigravity
 ```
 
 ---
 
-### `agent-init`
-**Initialize AGENTS.md context**
+## ⚙️ Configuration
+
+### `agent-init` 🆕
+**Create AGENTS.md with AI context (v2.0 Clean Architecture)**
 
 ```bash
-sdd-skills-ai agent-init [project-directory] [--agent <agent>]
+sdd-skills-ai agent-init [options] [project-directory]
 ```
 
-**Description**: Creates AGENTS.md file with AI agent context and role definitions.
+**Options:**
+- `-a, --agent <agent>`: Target AI Assistant
 
-**Options**:
-- `project-directory` (optional) - Directory to initialize
-- `--agent <agent>` (optional) - Target AI assistant
+**What it does:**
+- Creates comprehensive AGENTS.md file using Clean Architecture
+- Includes project context and architecture details
+- Lists supported AI assistants with new structure
+- Provides development guidelines following SOLID principles
 
-**Supported Agents**:
-- `windsurf`, `claude`, `cursor`, `gemini`, `antigravity`, and more
-
-**Example**:
+**Example:**
 ```bash
-# Initialize with default agent
 sdd-skills-ai agent-init
-
-# Initialize for specific agent
-sdd-skills-ai agent-init --agent windsurf
 ```
-
----
-
-## 🔧 Configuration Commands
 
 ### `configure-tools`
 **Configure AI coding assistant tools**
 
 ```bash
-sdd-skills-ai configure-tools [project-directory] [--agent <agent>]
+sdd-skills-ai configure-tools [options] [project-directory]
 ```
 
-**Description**: Interactive selection and configuration of AI coding assistants with their specific directory structures.
+**Options:**
+- `-a, --agent <agent>`: Target AI Assistant
 
-**Options**:
-- `project-directory` (optional) - Directory to configure
-- `--agent <agent>` (optional) - Target AI assistant
+**What it does:**
+- Creates directory structure for AI assistants
+- Sets up skills and workflows directories
+- Configures agent-specific settings
 
-**Supported Tools** (23 total):
-- Claude Code, Cursor, Windsurf, Gemini CLI
-- Antigravity, Cline, Codex, Continue
-- GitHub Copilot, Kiro, OpenCode
-- And 13 more specialized tools
+**Supported AI Assistants:**
+- Antigravity (.agent/)
+- Claude Code (.claude/)
+- Gemini CLI (.gemini/)
+- Cursor (.cursor/)
+- Kiro IDE (.kiro/)
+- OpenCode (.agents/)
+- Windsurf (.agent/)
 
-**What it creates**:
-- Tool-specific directories (`.claude/skills/`, `.cursor/workflows/`, etc.)
-- Configuration files for each selected tool
-- Path mappings for skills and workflows
-
-**Example**:
+**Example:**
 ```bash
-# Configure tools interactively
 sdd-skills-ai configure-tools
+```
 
-# Configure for specific agent
-sdd-skills-ai configure-tools --agent windsurf
+### `setup-scrum-configs` 🆕
+**Configure Scrum agents**
+
+```bash
+sdd-skills-ai setup-scrum-configs [options] [project-directory]
+```
+
+**Options:**
+- `-a, --agent <agent>`: Target AI Assistant
+
+**What it does:**
+- Creates Scrum configuration in JSON
+- Updates AGENTS.md with Scrum information
+- Sets up 9 Scrum agents with roles and responsibilities
+
+**Example:**
+```bash
+sdd-skills-ai setup-scrum-configs
 ```
 
 ---
+
+## 🛠️ Skills & Tools
 
 ### `apply-skills`
-**Inject selected skill packs**
+**Inject Antigravity skill packs**
 
 ```bash
-sdd-skills-ai apply-skills [project-directory] [--agent <agent>]
+sdd-skills-ai apply-skills [options] [project-directory]
 ```
 
-**Description**: Select and install community skill packs and templates.
+**Options:**
+- `-a, --agent <agent>`: Target AI Assistant
 
-**Options**:
-- `project-directory` (optional) - Directory to apply skills to
-- `--agent <agent>` (optional) - Target AI assistant
+**What it does:**
+- Installs Antigravity Kit (standard workflows)
+- Installs Awesome Skills (community skills)
+- Creates comprehensive skill library
 
-**Available Skill Packs**:
-- Antigravity Kit - Standard workflow skills
-- Awesome Skills - 950+ community curated skills
-- Custom registered skills
+**Available Skills:**
+- 47+ Antigravity skills including:
+  - api-patterns, architecture, clean-code
+  - frontend-design, mobile-design
+  - testing-patterns, vulnerability-scanner
+  - And many more
 
-**Example**:
+**Example:**
 ```bash
-# Apply skills interactively
 sdd-skills-ai apply-skills
-
-# Apply skills for specific agent
-sdd-skills-ai apply-skills --agent claude
 ```
-
----
-
-### `spec-skills-add`
-**Enable autonomous tool addition**
-
-```bash
-sdd-skills-ai spec-skills-add [project-directory] [--agent <agent>]
-```
-
-**Description**: Give your AI agent the ability to dynamically add new specs and skills.
-
-**Options**:
-- `project-directory` (optional) - Directory to enable
-- `--agent <agent>` (optional) - Target AI assistant
-
-**What it enables**:
-- AI can add new spec templates
-- AI can create custom skills
-- AI can register new workflows
-- Autonomous capability expansion
-
-**Example**:
-```bash
-# Enable autonomous skills
-sdd-skills-ai spec-skills-add
-
-# Enable for specific agent
-sdd-skills-ai spec-skills-add --agent cursor
-```
-
----
-
-## 🏈 Scrum Commands
 
 ### `install-scrum`
 **Install complete Scrum methodology**
 
 ```bash
-sdd-skills-ai install-scrum [project-directory] [--agent <agent>]
+sdd-skills-ai install-scrum [options] [project-directory]
 ```
 
-**Description**: Installs the complete Scrum implementation with SDD+TDD+DDD disciplines.
+**Options:**
+- `-a, --agent <agent>`: Target AI Assistant
 
-**Options**:
-- `project-directory` (optional) - Directory to install Scrum in
-- `--agent <agent>` (optional) - Target AI assistant
+**What it does:**
+- Installs 9 Scrum agents
+- Adds 13 Scrum skills
+- Creates 8 Scrum workflows
+- Sets up SDD+TDD+DDD disciplines
 
-**What it installs**:
-- **9 Scrum Agents**: Product Owner, Scrum Master, Developer, Tech Lead, UX Designer, QA Engineer, Security Engineer, DevOps Engineer, Data Lead
-- **13 Scrum Skills**: Core disciplines, protocols, and phase-specific skills
-- **3 Scrum Workflows**: Feature lifecycle, sprint planning, agent setup
+**Scrum Components:**
+- **Agents**: Product Owner, Scrum Master, Developer, Tech Lead, UX Designer, QA Engineer, Security Engineer, DevOps Engineer, Data Lead
+- **Skills**: SDD Contract, TDD Cycle, DDD Modeling, etc.
+- **Workflows**: Feature Lifecycle, Sprint Planning, etc.
 
-**Example**:
+**Example:**
 ```bash
-# Install Scrum methodology
 sdd-skills-ai install-scrum
+```
 
-# Install for specific agent
-sdd-skills-ai install-scrum --agent windsurf
+### `spec-skills-add` 🆕
+**Enable autonomous tool addition**
+
+```bash
+sdd-skills-ai spec-skills-add [options] [project-directory]
+```
+
+**Options:**
+- `-a, --agent <agent>`: Target AI Assistant
+
+**What it does:**
+- Creates autonomous tool addition system
+- Sets up skill registry
+- Creates configuration for custom tools
+- Enables CLI integration scripts
+
+**Example:**
+```bash
+sdd-skills-ai spec-skills-add
 ```
 
 ---
 
-### `setup-scrum-configs`
-**Configure Scrum agents in configuration files**
-
-```bash
-sdd-skills-ai setup-scrum-configs [project-directory] [--agent <agent>]
-```
-
-**Description**: Updates Agents.md and Claude.md with Scrum agent configurations.
-
-**Options**:
-- `project-directory` (optional) - Directory to configure
-- `--agent <agent>` (optional) - Target AI assistant
-
-**What it does**:
-- Creates AGENTS.md if it doesn't exist
-- Adds Scrum agents section with all 9 roles
-- Updates Claude.md with Scrum integration guidelines
-- Preserves existing content
-
-**Example**:
-```bash
-# Setup Scrum configurations
-sdd-skills-ai setup-scrum-configs
-
-# Setup for specific agent
-sdd-skills-ai setup-scrum-configs --agent claude
-```
-
----
-
-## 🔌 Extension Commands
+## 🔧 Utilities
 
 ### `add-skill`
 **Register custom skill repository**
@@ -283,153 +224,18 @@ sdd-skills-ai setup-scrum-configs --agent claude
 sdd-skills-ai add-skill <repository-url>
 ```
 
-**Description**: Register a custom GitHub repository containing skill templates.
+**Arguments:**
+- `repository-url`: GitHub repository URL
 
-**Arguments**:
-- `repository-url` - GitHub repository URL
+**What it does:**
+- Registers custom skill repository
+- Makes skills available for injection
+- Updates configuration
 
-**Example**:
+**Example:**
 ```bash
-# Add custom skills
-sdd-skills-ai add-skill https://github.com/your-org/custom-skills
+sdd-skills-ai add-skill https://github.com/user/custom-skills
 ```
-
----
-
-### `completion`
-**Setup shell autocompletion for sdd-skills-ai commands**
-
-```bash
-sdd-skills-ai completion
-```
-
-**Description**: Interactive setup of shell autocompletion for all sdd-skills-ai commands. Supports Bash, Zsh, and Windows PowerShell.
-
-**What it does**:
-- Detects your shell type automatically
-- Provides interactive shell selection
-- Adds completion scripts to appropriate config files
-- Supports all 10 sdd-skills-ai commands
-
-**Supported Shells**:
-- **Bash** - Adds completion to `~/.bashrc`
-- **Zsh** - Adds completion to `~/.zshrc`
-- **Windows PowerShell** - Adds completion to PowerShell profile
-- **Other** - Provides generic completion script
-
-**Interactive Setup**:
-```bash
-sdd-skills-ai completion
-
-? Which shell are you using? (Use arrow keys)
-❯ Bash (~/.bashrc)
-  Zsh (~/.zshrc)
-  Windows PowerShell
-  Other/Custom
-
-? Add autocompletion to ~/.bashrc? (Y/n)
-✅ Autocompletion added to ~/.bashrc
-
-🔄 To activate autocompletion, run:
-   source ~/.bashrc
-
-Or restart your terminal.
-
-💡 Test it out:
-   sdd-skills-ai <TAB>
-   sdd-skills-ai w<TAB>
-```
-
-**Completion Commands**:
-- `wizard` - Full interactive experience (RECOMMENDED)
-- `init` - Setup spec-driven architecture base
-- `configure-tools` - Configure AI coding assistant tools
-- `apply-skills` - Inject selected skill packs
-- `agent-init` - Initialize AGENTS.md context
-- `install-scrum` - Install complete Scrum methodology
-- `setup-scrum-configs` - Configure Scrum agents
-- `add-skill` - Register custom skill repository
-- `add-spec` - Register local spec-driven tool
-- `spec-skills-add` - Enable autonomous tool addition
-
-**Manual Installation**:
-If you prefer manual setup, you can add the completion script directly:
-
-**Bash (~/.bashrc)**:
-```bash
-# SDD Skills AI Bash completion
-_sdd_skills_ai_completion() {
-  local cur prev commands
-  COMPREPLY=()
-  cur="${COMP_WORDS[COMP_CWORD]}"
-  prev="${COMP_WORDS[COMP_CWORD-1]}"
-
-  commands="wizard init configure-tools apply-skills agent-init install-scrum setup-scrum-configs add-skill add-spec spec-skills-add"
-
-  if [[ ${cur} == * ]]; then
-    COMPREPLY=( $(compgen -W "${commands}" -- ${cur}) )
-  fi
-
-  return 0
-}
-
-complete -F _sdd_skills_ai_completion sdd-skills-ai
-```
-
-**Zsh (~/.zshrc)**:
-```bash
-# SDD Skills AI ZSH completion
-_sdd_skills_ai_completion() {
-  local -a commands
-  commands=(
-    'wizard:Full interactive experience (RECOMMENDED)'
-    'init:Setup spec-driven architecture base'
-    'configure-tools:Configure AI coding assistant tools'
-    'apply-skills:Inject selected skill packs'
-    'agent-init:Initialize AGENTS.md context'
-    'install-scrum:Install complete Scrum methodology'
-    'setup-scrum-configs:Configure Scrum agents'
-    'add-skill:Register custom skill repository'
-    'add-spec:Register local spec-driven tool'
-    'spec-skills-add:Enable autonomous tool addition'
-  )
-
-  _describe 'command' commands
-}
-
-compdef _sdd_skills_ai_completion sdd-skills-ai
-```
-
-**Windows PowerShell**:
-```powershell
-# SDD Skills AI PowerShell completion
-Register-ArgumentCompleter -Native -CommandName sdd-skills-ai -ScriptBlock {
-    param($wordToComplete, $commandAst, $cursorPosition)
-
-    $commands = @('wizard', 'init', 'configure-tools', 'apply-skills', 'agent-init', 'install-scrum', 'setup-scrum-configs', 'add-skill', 'add-spec', 'spec-skills-add')
-
-    if ($wordToComplete -eq '') {
-        return $commands
-    }
-
-    return $commands | Where-Object { $_ -like "$wordToComplete*" }
-}
-```
-
-**Example**:
-```bash
-# Setup autocompletion interactively
-sdd-skills-ai completion
-
-# Test autocompletion
-sdd-skills-ai <TAB>
-# wizard init configure-tools apply-skills agent-init install-scrum setup-scrum-configs add-skill add-spec spec-skills-add
-
-sdd-skills-ai w<TAB>
-# wizard
-```
-
----
 
 ### `add-spec`
 **Register local spec-driven tool**
@@ -438,74 +244,141 @@ sdd-skills-ai w<TAB>
 sdd-skills-ai add-spec <local-path>
 ```
 
-**Description**: Register a local spec-driven tool or template collection.
+**Arguments:**
+- `local-path`: Path to local spec-driven tools
 
-**Arguments**:
-- `local-path` - Path to local spec-driven tools
+**What it does:**
+- Registers local spec tools
+- Integrates with existing workflow
+- Updates tool registry
 
-**Example**:
+**Example:**
 ```bash
-# Add local spec tools
-sdd-skills-ai add-spec ./local-tools/my-spec-kit
+sdd-skills-ai add-spec ./my-spec-tools
+```
+
+### `completion`
+**Setup shell autocompletion**
+
+```bash
+sdd-skills-ai completion
+```
+
+**What it does:**
+- Sets up tab completion for shell
+- Configures shell integration
+- Enables command suggestions
+
+**Supported Shells:**
+- Zsh (~/.zshrc)
+- Bash (~/.bashrc)
+- Fish (~/.config/fish/config.fish)
+
+**Example:**
+```bash
+sdd-skills-ai completion
+source ~/.zshrc  # Reload shell
+```
+
+### `stats`
+**Show available components statistics**
+
+```bash
+sdd-skills-ai stats
+```
+
+**What it does:**
+- Displays available AI tools count
+- Shows Scrum components statistics
+- Lists available skills and workflows
+
+**Example Output:**
+```
+� SDD Skills AI Statistics:
+🔧 Supported AI Tools: 23
+🏈 Scrum Components:
+   � Agents: 9
+   🛠️ Skills: 13
+   🔄 Workflows: 8
+   📦 Total: 30
 ```
 
 ---
 
-## 🌐 Global Options
+## 🎯 Usage Examples
 
-All commands support these global options:
-
-### `--help`
-Show help information for the command.
-
+### Complete Project Setup
 ```bash
-sdd-skills-ai --help
-sdd-skills-ai wizard --help
-```
+# Create new project
+mkdir my-project && cd my-project
 
-### `--version`
-Show version information.
-
-```bash
-sdd-skills-ai --version
-```
-
----
-
-## 📊 Exit Codes
-
-- `0` - Success
-- `1` - General error or command failed
-
----
-
-## 🌍 Environment Variables
-
-### `SDD_SKILLS_AI_CONFIG_DIR`
-Override default configuration directory.
-
-```bash
-export SDD_SKILLS_AI_CONFIG_DIR=~/.my-sdd-config
+# Run complete wizard
 sdd-skills-ai wizard
+
+# Start using with AI
+@scrum.product-owner Build a user authentication system
 ```
 
-### `SDD_SKILLS_AI_DEBUG`
-Enable debug logging.
-
+### Quick Setup
 ```bash
-export SDD_SKILLS_AI_DEBUG=1
-sdd-skills-ai wizard
+# Initialize with specific agent
+sdd-skills-ai init . --agent antigravity
+
+# Add skills
+sdd-skills-ai apply-skills
+
+# Setup Scrum
+sdd-skills-ai install-scrum
+```
+
+### Custom Configuration
+```bash
+# Configure specific AI tool
+sdd-skills-ai configure-tools --agent cursor
+
+# Add custom skills
+sdd-skills-ai add-skill https://github.com/company/skills
+
+# Enable autocompletion
+sdd-skills-ai completion
 ```
 
 ---
 
-## 🔗 Related Documentation
+## 🆚 v2.0 Changes
 
-- [Commands](commands.md) - AI slash commands and workflows
-- [Configuration](configuration.md) - Configuration options and customization
-- [Supported Tools](supported-tools.md) - All 23 supported AI assistants
-- [Scrum Overview](scrum/overview.md) - Complete Scrum methodology guide
+### New Commands 🆕
+- `agent-init` - Clean Architecture implementation
+- `setup-scrum-configs` - Scrum configuration
+- `spec-skills-add` - Autonomous tool addition
+
+### Improved Commands
+- `wizard` - Enhanced with all features
+- `apply-skills` - More skills available (47 total)
+- `install-scrum` - Complete methodology
+
+### Architecture Changes
+- **Clean Architecture** with SOLID principles
+- Better separation of concerns
+- Improved error handling
+- Enhanced testability
+- Dependency injection pattern
+
+### Benefits
+- **Maintainability**: Clear separation makes code easier to modify
+- **Testability**: Each component can be tested in isolation
+- **Extensibility**: New features can be added without breaking existing code
+- **Scalability**: Architecture supports growth from small to large projects
 
 ---
 
-*Need help with a specific command? Run `sdd-skills-ai <command> --help` for detailed usage information.*
+## 🤝 Help & Support
+
+- **Get help**: `sdd-skills-ai --help` or `sdd-skills-ai <command> --help`
+- **GitHub Issues**: [Report bugs](https://github.com/eltonjosesouza/sdd-skills-ai/issues)
+- **Discussions**: [Ask questions](https://github.com/eltonjosesouza/sdd-skills-ai/discussions)
+- **Discord**: [Join community](https://discord.gg/YctCnvvshC)
+
+---
+
+*This reference covers all commands available in SDD Skills AI v2.0. For more detailed examples and use cases, see the [Getting Started](getting-started.md) guide.*
